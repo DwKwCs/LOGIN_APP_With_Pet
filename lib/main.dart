@@ -1,4 +1,4 @@
-import 'package:login_app_test/screen/main_screen.dart';
+import 'package:login_with_pet/screen/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 

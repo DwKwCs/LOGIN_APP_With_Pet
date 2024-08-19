@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login_app_test/component/calendar/schedule_text_field.dart';
-import 'package:login_app_test/const/colors.dart';
+import 'package:login_with_pet/component/calendar/schedule_text_field.dart';
+import 'package:login_with_pet/const/colors.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({Key? key}) : super(key: key);

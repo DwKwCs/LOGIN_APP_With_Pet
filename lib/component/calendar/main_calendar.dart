@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:login_app_test/const/colors.dart';
+import 'package:login_with_pet/const/colors.dart';
 
 class MainCalendar extends StatelessWidget {
   final OnDaySelected onDaySelected;
@@ -21,18 +21,19 @@ class MainCalendar extends StatelessWidget {
         date.year == selectedDate.year &&
             date.month == selectedDate.month &&
             date.day == selectedDate.day,
-      firstDay: DateTime(1800, 1, 1),
-      lastDay: DateTime(3000, 1, 1),
+      firstDay: DateTime(2000, 1, 1),
+      lastDay: DateTime(2100, 1, 1),
       focusedDay: DateTime.now(),
       headerStyle: const HeaderStyle(
         formatButtonVisible: false,
         titleTextStyle: TextStyle(
           fontWeight: FontWeight.w700,
-          fontSize: 16.0,
+          fontSize: 20.0,
         ),
       ),
       daysOfWeekHeight: 40,
       calendarStyle: const CalendarStyle(
+        tablePadding: EdgeInsets.only(left: 5, right: 5),
         tableBorder: TableBorder(
           bottom: BorderSide(
             color: Color(0xfff1ede6),
@@ -49,7 +50,7 @@ class MainCalendar extends StatelessWidget {
           color: Colors.black,
         ),
         selectedDecoration: BoxDecoration(
-          color: Color(0xffffc897),
+          color: PRIMARY_COLOR,
           shape: BoxShape.circle,
         ),
         cellAlignment: Alignment.topLeft,

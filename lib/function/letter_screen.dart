@@ -4,13 +4,18 @@ class LetterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
             AppBar(
-              backgroundColor: Color(0xfff8e9d9),
-              title: Center(
-                child: Text('편지'),
+              backgroundColor: Colors.white,
+              title: Text('편지'),
+              centerTitle: true,
+              elevation: 0.0,
+              leading: IconButton(
+                icon: Icon(Icons.create),
+                onPressed: () {},
               ),
             ),
             Center(

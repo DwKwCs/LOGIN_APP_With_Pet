@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login_app_test/component/map_info/map_hospital.dart';
-import 'package:login_app_test/component/map_info/map_funeral_hall.dart';
+import 'package:login_with_pet/component/map_info/map_hospital.dart';
+import 'package:login_with_pet/component/map_info/map_funeral_hall.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({Key? key}) : super(key: key);
@@ -10,24 +10,25 @@ class InfoScreen extends StatefulWidget {
 }
 
 class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateMixin {
-  TabController? _tabController;
+  TabController? tabController;
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-        length: 2,
-        vsync: this,
+    tabController = TabController(
+      length: 2,
+      vsync: this,
+      animationDuration: Duration.zero,
     );
-    _tabController!.addListener(
-        () => setState(() =>  _selectedIndex = _tabController!.index)
+    tabController!.addListener(
+        () => setState(() =>  _selectedIndex = tabController!.index)
     );
   }
 
   @override
   void dispose() {
-    _tabController!.dispose();
+    tabController!.dispose();
     super.dispose();
   }
 
@@ -42,20 +43,20 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
           '지도',
         ),
       ),
-      body: SizedBox(
-        height: 50,
-        child: _tabBar(),
+      body: Column(
+        children: [
+          _tabBar(),
+          Expanded(
+            child: _tabBarView(),
+          ),
+        ],
       ),
     );
   }
 
   Widget _tabBar() {
-    TabBarView(
-      children: [
-
-      ],
-    );
     return TabBar(
+      overlayColor: MaterialStateProperty.all<Color>(Colors.white),
       indicatorColor: Colors.black,
       indicatorWeight: 5,
       indicatorSize: TabBarIndicatorSize.tab,
@@ -65,7 +66,7 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
         fontWeight: FontWeight.bold,
       ),
       unselectedLabelColor: Colors.grey[400],
-      controller: _tabController,
+      controller: tabController,
       tabs: const [
         Tab(
           text: '병원',
@@ -73,6 +74,17 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
         Tab(
           text: '장례식장',
         ),
+      ],
+    );
+  }
+
+  Widget _tabBarView() {
+    return TabBarView(
+      physics: NeverScrollableScrollPhysics(),
+      controller: tabController,
+      children: [
+        WebViewHospital(),
+        WebViewFuneralHall(),
       ],
     );
   }

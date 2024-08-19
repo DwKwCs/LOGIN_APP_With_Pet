@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login_app_test/function/home_screen.dart';
-import 'package:login_app_test/function/letter_screen.dart';
-import 'package:login_app_test/function/calendar_screen.dart';
-import 'package:login_app_test/function/guide_screen.dart';
-import 'package:login_app_test/function/info_screen.dart';
+import 'package:login_with_pet/function/home_screen.dart';
+import 'package:login_with_pet/function/letter_screen.dart';
+import 'package:login_with_pet/function/calendar_screen.dart';
+import 'package:login_with_pet/function/guide_screen.dart';
+import 'package:login_with_pet/function/info_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -62,7 +62,7 @@ class _MainScreenState extends State<MainScreen> {
                 label: '홈',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.mail),
+                icon: Icon(Icons.mail_outline),
                 label: '편지',
               ),
               BottomNavigationBarItem(
@@ -70,11 +70,11 @@ class _MainScreenState extends State<MainScreen> {
                 label: '캘린더',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.info),
+                icon: Icon(Icons.info_outline),
                 label: '가이드',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.maps_home_work_rounded),
+                icon: Icon(Icons.maps_home_work_outlined),
                 label: '지도',
               ),
             ],
