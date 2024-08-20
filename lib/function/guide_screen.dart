@@ -41,6 +41,7 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
         centerTitle: true,
         title: Text(
           '가이드',
+          style: TextStyle(fontWeight: FontWeight.w800)
         ),
       ),
       body: SizedBox(

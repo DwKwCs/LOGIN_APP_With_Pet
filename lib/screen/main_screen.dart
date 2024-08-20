@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:login_with_pet/const/colors.dart';
 import 'package:login_with_pet/function/home_screen.dart';
 import 'package:login_with_pet/function/letter_screen.dart';
 import 'package:login_with_pet/function/calendar_screen.dart';
@@ -38,8 +39,9 @@ class _MainScreenState extends State<MainScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey,
-              blurRadius: 8,
+              color: Color(0xffe9ecef),
+              blurRadius: 5,
+              spreadRadius: 2,
             ),
           ],
         ),

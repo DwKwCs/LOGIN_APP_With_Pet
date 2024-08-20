@@ -10,7 +10,10 @@ class LetterScreen extends StatelessWidget {
           children: [
             AppBar(
               backgroundColor: Colors.white,
-              title: Text('편지'),
+              title: Text(
+                '편지',
+                style: TextStyle(fontWeight: FontWeight.w800)
+              ),
               centerTitle: true,
               elevation: 0.0,
               leading: IconButton(

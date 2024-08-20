@@ -13,7 +13,10 @@ class HomeScreen extends StatelessWidget {
             AppBar(
               backgroundColor: Colors.white,
               centerTitle: true,
-              title: Text('홈'),
+              title: Text(
+                '홈',
+                style: TextStyle(fontWeight: FontWeight.w800)
+              ),
               elevation: 0.0,
               leading: IconButton(
                 icon: Icon(Icons.settings_outlined),

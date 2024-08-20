@@ -41,6 +41,7 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
         centerTitle: true,
         title: Text(
           '지도',
+          style: TextStyle(fontWeight: FontWeight.w800)
         ),
       ),
       body: Column(
