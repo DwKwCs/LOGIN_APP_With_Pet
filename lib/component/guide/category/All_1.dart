@@ -16,7 +16,7 @@ class All1 extends StatelessWidget {
               height: 30,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+                border: Border(bottom: BorderSide(color: PRIMARY_COLOR, width: 3)),
               ),
               child: Text(
                 '총 5개의 가이드',
@@ -29,11 +29,11 @@ class All1 extends StatelessWidget {
             Expanded(
               child: ListView(
                 children: <Widget>[
-                  GuideCard(title: '가이드1', tag: '#태그'),
-                  GuideCard(title: '가이드2', tag: '#태그'),
-                  GuideCard(title: '가이드3', tag: '#태그'),
-                  GuideCard(title: '가이드4', tag: '#태그'),
-                  GuideCard(title: '가이드5', tag: '#태그'),
+                  GuideCard(title: '가이드1', tag: '#태그', percent: 0.6),
+                  GuideCard(title: '가이드2', tag: '#태그', percent: 0.2),
+                  GuideCard(title: '가이드3', tag: '#태그', percent: 0.8),
+                  GuideCard(title: '가이드4', tag: '#태그', percent: 0.4),
+                  GuideCard(title: '가이드5', tag: '#태그', percent: 1.0),
                 ],
               )
             ),
@@ -47,11 +47,13 @@ class All1 extends StatelessWidget {
 class GuideCard extends StatefulWidget {
   final String title;
   final String tag;
+  final double percent;
 
   const GuideCard({
     Key? key,
     required this.title,
     required this.tag,
+    required this.percent,
   }) : super(key: key);
 
   @override
@@ -64,7 +66,7 @@ class GuideCardState extends State<GuideCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 105,
+      height: 108,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: SUB_COLOR2, width: 1)),
@@ -111,15 +113,19 @@ class GuideCardState extends State<GuideCard> {
               ],
             ),
           ),
-          Transform.translate(
-            offset: Offset(0, -25),
-            child: Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: LinearPercentIndicator(
-                width: 180.0,
-                lineHeight: 8.0,
-                percent: 0.5,
-                progressColor: Colors.orange,
+          Expanded(
+            child: Transform.translate(
+              offset: Offset(0, -25),
+              child: Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: LinearPercentIndicator(
+                  width: 180.0,
+                  lineHeight: 8.0,
+                  percent: widget.percent,
+                  barRadius: Radius.circular(10),
+                  backgroundColor: Colors.grey[300],
+                  progressColor: Colors.orange,
+                ),
               ),
             ),
           ),
