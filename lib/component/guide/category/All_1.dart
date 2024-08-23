@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login_with_pet/const/colors.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class All1 extends StatelessWidget {
 
@@ -12,8 +13,11 @@ class All1 extends StatelessWidget {
           children: [
             Container(
               padding: EdgeInsets.only(left: 20),
-              height: 20,
+              height: 30,
               width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+              ),
               child: Text(
                 '총 5개의 가이드',
                 style: TextStyle(
@@ -60,13 +64,12 @@ class GuideCardState extends State<GuideCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 100,
+      height: 105,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: SUB_COLOR2, width: 1)),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -76,32 +79,49 @@ class GuideCardState extends State<GuideCard> {
                   onPressed: () {},
                   child: Text(
                     widget.title,
-                    style: TextStyle(fontSize: 20, color: Colors.black),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Colors.black),
                   ),
                 ),
               ),
             ],
           ),
-          Row(
-            children: [
-              SizedBox(width: 20),
-              Text(
-                widget.tag,
-                style: TextStyle(fontSize: 15, color: Color(0xffcac7c4)),
+          Transform.translate(
+            offset: Offset(0, -20),
+            child: Row(
+              children: [
+                SizedBox(width: 20),
+                Text(
+                  widget.tag,
+                  style: TextStyle(fontSize: 16, color: Color(0xffcac7c4)),
+                ),
+                Spacer(),
+                IconButton(
+                  icon: Icon(Icons.bookmark_outline_rounded),
+                  iconSize: 30,
+                  isSelected: isSelected,
+                  selectedIcon: Icon(Icons.bookmark_rounded, color: Colors.black),
+                  highlightColor: Colors.transparent,
+                  onPressed: () {
+                    setState(() {
+                      isSelected = !isSelected;
+                    });
+                  },
+                ),
+                SizedBox(width: 20),
+              ],
+            ),
+          ),
+          Transform.translate(
+            offset: Offset(0, -25),
+            child: Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: LinearPercentIndicator(
+                width: 180.0,
+                lineHeight: 8.0,
+                percent: 0.5,
+                progressColor: Colors.orange,
               ),
-              Spacer(),
-              IconButton(
-                icon: Icon(Icons.bookmark_border),
-                isSelected: isSelected,
-                selectedIcon: Icon(Icons.bookmark, color: Colors.black),
-                onPressed: () {
-                  setState(() {
-                    isSelected = !isSelected;
-                  });
-                },
-              ),
-              SizedBox(width: 20),
-            ],
+            ),
           ),
         ],
       ),
