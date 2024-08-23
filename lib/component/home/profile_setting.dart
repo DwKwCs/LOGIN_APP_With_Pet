@@ -70,6 +70,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     '이름',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   ),
+                  SizedBox(width: 40),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(hintText: '김멍멍'),
+                    ),
+                  ),
+                  SizedBox(width: 20),
                 ],
               ),
             ),
@@ -86,6 +93,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     '한마디',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(hintText: '강아지'),
+                    ),
+                  ),
+                  SizedBox(width: 20),
                 ],
               ),
             ),
@@ -102,6 +116,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     '종',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   ),
+                  SizedBox(width: 56),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(hintText: '골든 리트리버'),
+                    ),
+                  ),
+                  SizedBox(width: 20),
                 ],
               ),
             ),
@@ -118,6 +139,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     '생일',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   ),
+                  SizedBox(width: 36),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(hintText: '2020.11.05'),
+                    ),
+                  ),
+                  SizedBox(width: 20),
                 ],
               ),
             ),

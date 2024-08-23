@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:login_with_pet/component/map_info/map_hospital.dart';
-import 'package:login_with_pet/component/map_info/map_funeral_hall.dart';
+import 'package:login_with_pet/component/guide/guide_all.dart';
+import 'package:login_with_pet/component/guide/guide_favorites.dart';
 
 class GuideScreen extends StatefulWidget {
   const GuideScreen({Key? key}) : super(key: key);
@@ -44,16 +44,20 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
           style: TextStyle(fontWeight: FontWeight.w800)
         ),
       ),
-      body: SizedBox(
-        height: 50,
-        child: _tabBar(),
+      body: Column(
+        children: [
+          _tabBar(),
+          Expanded(
+            child: _tabBarView(),
+          ),
+        ],
       ),
     );
   }
 
   Widget _tabBar() {
     return TabBar(
-      overlayColor: MaterialStateProperty.all<Color>(Colors.white),
+      overlayColor: WidgetStateProperty.all<Color>(Colors.white),
       indicatorColor: Colors.black,
       indicatorWeight: 5,
       indicatorSize: TabBarIndicatorSize.tab,
@@ -71,6 +75,17 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
         Tab(
           text: '저장한 가이드',
         ),
+      ],
+    );
+  }
+
+  Widget _tabBarView() {
+    return TabBarView(
+      physics: NeverScrollableScrollPhysics(),
+      controller: _tabController,
+      children: [
+        GuideAllScreen(),
+        FavoritesScreen(),
       ],
     );
   }
