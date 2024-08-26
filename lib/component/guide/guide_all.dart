@@ -79,7 +79,6 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
     return Tab(
       child: Container(
         height: 42,
-        width: 61,
         decoration: _selectedIndex != index ? BoxDecoration(
           color: Color(0xfff9f6f3),
           borderRadius: BorderRadius.circular(80.0),
