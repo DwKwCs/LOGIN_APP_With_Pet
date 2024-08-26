@@ -5,7 +5,6 @@ import 'package:login_with_pet/component/guide/category/All_2.dart';
 import 'package:login_with_pet/component/guide/category/All_3.dart';
 import 'package:login_with_pet/component/guide/category/All_4.dart';
 
-
 class GuideAllScreen extends StatefulWidget {
   const GuideAllScreen({Key? key}) : super(key: key);
 
@@ -14,7 +13,7 @@ class GuideAllScreen extends StatefulWidget {
 }
 
 class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProviderStateMixin {
-  TabController? _tabController;
+  late TabController _tabController;
   int _selectedIndex = 0;
 
   @override
@@ -25,14 +24,14 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
       vsync: this,
       animationDuration: Duration.zero,
     );
-    _tabController!.addListener(
-            () => setState(() => _selectedIndex = _tabController!.index)
+    _tabController.addListener(
+            () => setState(() => _selectedIndex = _tabController.index)
     );
   }
 
   @override
   void dispose() {
-    _tabController!.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -43,64 +42,15 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
       body: Column(
         children: [
           TabBar(
-            padding: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 15),
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
             overlayColor: WidgetStateProperty.all<Color>(Colors.white),
             dividerColor: Colors.transparent,
             controller: _tabController,
-            tabs: [
-              Tab(
-                child: Container(
-                  child: Center(
-                      child: Text('전체', style: TextStyle(fontSize: 16))
-                  ),
-                  decoration: _selectedIndex != 0 ? BoxDecoration(
-                    color: Color(0xfff9f6f3),
-                    borderRadius: BorderRadius.circular(80.0),
-                    border: Border.all(width: 1, color: Color(0xfff1eDe6)),
-                  ) : null,
-                ),
-              ),
-              Tab(
-                child: Container(
-                  child: Center(
-                      child: Text('임종', style: TextStyle(fontSize: 16))
-                  ),
-                  decoration: _selectedIndex != 1 ? BoxDecoration(
-                    color: Color(0xfff9f6f3),
-                    borderRadius: BorderRadius.circular(80.0),
-                    border: Border.all(width: 1, color: Color(0xfff1eDe6)),
-                  ) : null,
-                ),
-              ),
-              Tab(
-                child: Container(
-                  child: Center(
-                      child: Text('건강', style: TextStyle(fontSize: 16))
-                  ),
-                  decoration: _selectedIndex != 2 ? BoxDecoration(
-                    color: Color(0xfff9f6f3),
-                    borderRadius: BorderRadius.circular(80.0),
-                    border: Border.all(width: 1, color: Color(0xfff1eDe6)),
-                  ) : null,
-                ),
-              ),
-              Tab(
-                child: Container(
-                  child: Center(
-                      child: Text('음식', style: TextStyle(fontSize: 16))
-                  ),
-                  decoration: _selectedIndex != 3 ? BoxDecoration(
-                    color: Color(0xfff9f6f3),
-                    borderRadius: BorderRadius.circular(80.0),
-                    border: Border.all(width: 1, color: Color(0xfff1eDe6)),
-                  ) : null,
-                ),
-              ),
-            ],
+            tabs: List.generate(4, (index) => _buildTab(index)),
             unselectedLabelColor: Colors.black,
             labelColor: Colors.black,
-            indicatorPadding: EdgeInsets.only(left: 5, right: 5),
             indicatorSize: TabBarIndicatorSize.tab,
+            indicatorPadding: EdgeInsets.only(top: 3, bottom: 3, left: 5, right: 5),
             indicator: BoxDecoration(
               borderRadius: BorderRadius.circular(80.0),
               color: SUB_COLOR2,
@@ -108,23 +58,37 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
             ),
           ),
           Expanded(
-            child: _tabBarView(),
+            child: TabBarView(
+              physics: NeverScrollableScrollPhysics(),
+              controller: _tabController,
+              children: [
+                All1(),
+                All2(),
+                All3(),
+                All4(),
+              ],
+            ),
           )
         ],
       ),
     );
   }
 
-  Widget _tabBarView() {
-    return TabBarView(
-      physics: NeverScrollableScrollPhysics(),
-      controller: _tabController,
-      children: [
-        All1(),
-        All2(),
-        All3(),
-        All4(),
-      ],
+  Widget _buildTab(int index) {
+    final titles = ['전체', '임종', '건강', '음식'];
+    return Tab(
+      child: Container(
+        height: 42,
+        width: 61,
+        decoration: _selectedIndex != index ? BoxDecoration(
+          color: Color(0xfff9f6f3),
+          borderRadius: BorderRadius.circular(80.0),
+          border: Border.all(width: 1, color: Color(0xfff1eDe6)),
+        ) : null,
+        child: Center(
+          child: Text(titles[index], style: TextStyle(fontSize: 17)),
+        ),
+      ),
     );
   }
 }
