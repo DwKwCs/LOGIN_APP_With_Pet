@@ -50,7 +50,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
             _buildProfileRow('이름', '김멍멍', 40),
             _buildProfileRow('한마디', '강아지', 20),
             _buildProfileRow('종', '골든 리트리버', 56),
-            _buildProfileRow('생일', '2020.11.05', 36),
+            _buildProfileRow('생일', '2020.11.05', 38),
           ],
         ),
       ),

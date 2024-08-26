@@ -41,20 +41,22 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          TabBar(
-            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-            overlayColor: WidgetStateProperty.all<Color>(Colors.white),
-            dividerColor: Colors.transparent,
-            controller: _tabController,
-            tabs: List.generate(4, (index) => _buildTab(index)),
-            unselectedLabelColor: Colors.black,
-            labelColor: Colors.black,
-            indicatorSize: TabBarIndicatorSize.tab,
-            indicatorPadding: EdgeInsets.only(top: 3, bottom: 3, left: 5, right: 5),
-            indicator: BoxDecoration(
-              borderRadius: BorderRadius.circular(80.0),
-              color: SUB_COLOR2,
-              border: Border.all(width: 1, color: PRIMARY_COLOR),
+          Container(
+            child: TabBar(
+              padding: EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 20),
+              overlayColor: WidgetStateProperty.all<Color>(Colors.white),
+              dividerColor: Colors.transparent,
+              controller: _tabController,
+              tabs: List.generate(4, (index) => _buildTab(index)),
+              unselectedLabelColor: Colors.black,
+              labelColor: Colors.black,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorPadding: EdgeInsets.only(left: 5, right: 5),
+              indicator: BoxDecoration(
+                borderRadius: BorderRadius.circular(80.0),
+                color: SUB_COLOR2,
+                border: Border.all(width: 1, color: PRIMARY_COLOR),
+              ),
             ),
           ),
           Expanded(
@@ -76,17 +78,15 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
 
   Widget _buildTab(int index) {
     final titles = ['전체', '임종', '건강', '음식'];
-    return Tab(
-      child: Container(
-        height: 42,
-        decoration: _selectedIndex != index ? BoxDecoration(
-          color: Color(0xfff9f6f3),
-          borderRadius: BorderRadius.circular(80.0),
-          border: Border.all(width: 1, color: Color(0xfff1eDe6)),
-        ) : null,
-        child: Center(
-          child: Text(titles[index], style: TextStyle(fontSize: 17)),
-        ),
+    return Container(
+      constraints: BoxConstraints.tight(Size(100, 40)),
+      decoration: _selectedIndex != index ? BoxDecoration(
+        color: Color(0xfff9f6f3),
+        borderRadius: BorderRadius.circular(80.0),
+        border: Border.all(width: 1, color: Color(0xfff1eDe6)),
+      ) : null,
+      child: Center(
+        child: Text(titles[index], style: TextStyle(fontSize: 17)),
       ),
     );
   }
