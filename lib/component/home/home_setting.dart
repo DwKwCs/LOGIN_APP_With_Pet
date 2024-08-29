@@ -35,21 +35,19 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const SizedBox(width: 10),
                 Text(
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   '알림 설정',
                 ),
-                const Spacer(),
+                Spacer(),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => NotificationScreen()));
                   },
                   icon: const Icon(Icons.chevron_right),
-                  highlightColor: Colors.grey,
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10,),
               ],
             ),
           ),
@@ -62,21 +60,19 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const SizedBox(width: 10),
                 Text(
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   '공지사항',
                 ),
-                const Spacer(),
+                Spacer(),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => AnnounceScreen()));
                   },
                   icon: const Icon(Icons.chevron_right),
-                  highlightColor: Colors.grey,
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: 10,),
               ],
             ),
           ),
@@ -89,12 +85,9 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                TextButton(
-                  child: Text(
-                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
-                    '개인정보 처리방침',
-                  ),
-                  onPressed: () {},
+                Text(
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  '개인정보 처리방침',
                 ),
               ],
             ),
@@ -108,12 +101,9 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                TextButton(
-                  child: Text(
-                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
-                    '서비스 이용약관',
-                  ),
-                  onPressed: () {},
+                Text(
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  '서비스 이용약관',
                 ),
               ],
             ),
@@ -127,12 +117,9 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                TextButton(
-                  child: Text(
-                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
-                    '로그아웃',
-                  ),
-                  onPressed: () {},
+                Text(
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  '로그아웃',
                 ),
               ],
             ),
@@ -146,12 +133,9 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                TextButton(
-                  child: Text(
-                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
-                    '계정 탈퇴',
-                  ),
-                  onPressed: () {},
+                Text(
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                  '계정 탈퇴',
                 ),
               ],
             ),

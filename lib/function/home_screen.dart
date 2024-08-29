@@ -3,8 +3,6 @@ import 'package:login_with_pet/component/home/profile_setting.dart';
 import 'package:login_with_pet/component/home/home_setting.dart';
 
 class HomeScreen extends StatelessWidget {
-  bool isChecked = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,13 +13,13 @@ class HomeScreen extends StatelessWidget {
             AppBar(
               backgroundColor: Colors.white,
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 '홈',
                 style: TextStyle(fontWeight: FontWeight.w800)
               ),
               elevation: 0.0,
               leading: IconButton(
-                icon: const Icon(Icons.settings_outlined),
+                icon: Icon(Icons.settings_outlined),
                 onPressed: () {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (context) => HomeSetting()));
@@ -29,7 +27,7 @@ class HomeScreen extends StatelessWidget {
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.create_outlined),
+                  icon: Icon(Icons.create_outlined),
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => ProfileSetting()));
