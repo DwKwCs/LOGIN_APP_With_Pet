@@ -43,15 +43,14 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
         children: [
           Container(
             child: TabBar(
-              padding: EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 20),
+              padding: const EdgeInsets.only(top: 15, bottom: 10, left: 10, right: 10),
               overlayColor: WidgetStateProperty.all<Color>(Colors.white),
               dividerColor: Colors.transparent,
               controller: _tabController,
               tabs: List.generate(4, (index) => _buildTab(index)),
               unselectedLabelColor: Colors.black,
               labelColor: Colors.black,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorPadding: EdgeInsets.only(left: 5, right: 5),
+              indicatorSize: TabBarIndicatorSize.label,
               indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(80.0),
                 color: SUB_COLOR2,
@@ -61,7 +60,7 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
           ),
           Expanded(
             child: TabBarView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               controller: _tabController,
               children: [
                 All1(),
@@ -78,15 +77,18 @@ class _GuideAllScreenState extends State<GuideAllScreen> with SingleTickerProvid
 
   Widget _buildTab(int index) {
     final titles = ['전체', '임종', '건강', '음식'];
-    return Container(
-      constraints: BoxConstraints.tight(Size(100, 40)),
-      decoration: _selectedIndex != index ? BoxDecoration(
-        color: Color(0xfff9f6f3),
-        borderRadius: BorderRadius.circular(80.0),
-        border: Border.all(width: 1, color: Color(0xfff1eDe6)),
-      ) : null,
-      child: Center(
-        child: Text(titles[index], style: TextStyle(fontSize: 17)),
+    return Expanded(
+      child: Container(
+        height: 45,
+        width: 65,
+        decoration: _selectedIndex != index ? BoxDecoration(
+          color: const Color(0xfff9f6f3),
+          borderRadius: BorderRadius.circular(80.0),
+          border: Border.all(width: 1, color: const Color(0xfff1eDe6)),
+        ) : null,
+        child: Center(
+          child: Text(titles[index], style: const TextStyle(fontSize: 17)),
+        ),
       ),
     );
   }
