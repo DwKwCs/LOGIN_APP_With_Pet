@@ -35,19 +35,21 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
+                const SizedBox(width: 10),
                 Text(
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   '알림 설정',
                 ),
-                Spacer(),
+                const Spacer(),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => NotificationScreen()));
                   },
                   icon: const Icon(Icons.chevron_right),
+                  highlightColor: Colors.grey,
                 ),
-                SizedBox(width: 10,),
+                const SizedBox(width: 10),
               ],
             ),
           ),
@@ -60,19 +62,21 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
+                const SizedBox(width: 10),
                 Text(
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
                   '공지사항',
                 ),
-                Spacer(),
+                const Spacer(),
                 IconButton(
                   onPressed: () {
                     Navigator.of(context)
                         .push(MaterialPageRoute(builder: (context) => AnnounceScreen()));
                   },
                   icon: const Icon(Icons.chevron_right),
+                  highlightColor: Colors.grey,
                 ),
-                SizedBox(width: 10,),
+                const SizedBox(width: 10),
               ],
             ),
           ),
@@ -85,25 +89,12 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Text(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  '개인정보 처리방침',
-                ),
-              ],
-            ),
-          ),
-          Container(
-            height: 70,
-            width: MediaQuery.of(context).size.width,
-            padding: const EdgeInsets.only(left: 20),
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: SUB_COLOR1, width: 1)),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  '서비스 이용약관',
+                TextButton(
+                  child: Text(
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
+                    '개인정보 처리방침',
+                  ),
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -117,9 +108,12 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Text(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  '로그아웃',
+                TextButton(
+                  child: Text(
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
+                    '서비스 이용약관',
+                  ),
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -133,9 +127,31 @@ class HomeSetting extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Text(
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-                  '계정 탈퇴',
+                TextButton(
+                  child: Text(
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
+                    '로그아웃',
+                  ),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 70,
+            width: MediaQuery.of(context).size.width,
+            padding: const EdgeInsets.only(left: 20),
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: SUB_COLOR1, width: 1)),
+            ),
+            child: Row(
+              children: [
+                TextButton(
+                  child: Text(
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w500),
+                    '계정 탈퇴',
+                  ),
+                  onPressed: () {},
                 ),
               ],
             ),
