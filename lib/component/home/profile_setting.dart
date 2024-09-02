@@ -4,6 +4,20 @@ import 'package:login_with_pet/const/colors.dart';
 import 'package:login_with_pet/component/home/profile_form.dart';
 
 class ProfileSetting extends StatefulWidget {
+  final bool isChecked;
+  final String name;
+  final String comment;
+  final String date;
+  final String ddate;
+
+  const ProfileSetting({
+    required this.isChecked,
+    required this.name,
+    required this.comment,
+    required this.date,
+    required this.ddate,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<ProfileSetting> createState() => _ProfileSettingState();
@@ -11,7 +25,22 @@ class ProfileSetting extends StatefulWidget {
 
 class _ProfileSettingState extends State<ProfileSetting> {
   final formKey = GlobalKey<FormState>();
-  bool isChecked = false;
+
+  late bool _isChecked;
+  late String _name;
+  late String _comment;
+  late String _date;
+  late String _ddate;
+
+  @override
+  void initState() {
+    super.initState();
+    _isChecked = widget.isChecked;
+    _name = widget.name;
+    _comment = widget.comment;
+    _date = widget.date;
+    _ddate = widget.ddate;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +66,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
               actions: [
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop({
+                      'isChecked': _isChecked,
+                      'name': _name,
+                      'comment': _comment,
+                      'date': _date,
+                      'ddate': _ddate,
+                    });
                   },
                   icon: const Icon(Icons.check),
                 ),
@@ -52,10 +87,10 @@ class _ProfileSettingState extends State<ProfileSetting> {
             const SizedBox(height: 10),
             Column(
               children: [
-                _buildProfileRow('이름', '김멍멍', 40),
-                _buildProfileRow('한마디', '강아지', 20),
-                _buildProfileRow('종', '골든 리트리버', 56),
-                _buildProfileRow('생일', '2020.11.05', 38),
+                _buildProfileRow('이름', _name, 40),
+                _buildProfileRow('한마디', _comment, 20),
+                _buildProfileRow('종', '리트리버', 56),
+                _buildProfileRow('생일', _date, 38),
                 Container(
                   height: 70,
                   width: MediaQuery.of(context).size.width,
@@ -70,24 +105,31 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
-                          color: isChecked ? Colors.black : Colors.grey[300],
+                          color: _isChecked ? Colors.black : Colors.grey[300],
                         ),
                       ),
                       SizedBox(width: 38),
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            if(isChecked == true) {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(builder: (context) =>
-                                  ProfileForm(label: '기일', hint: '2120',)));
+                            if (_isChecked) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileForm(
+                                    label: '기일',
+                                    hint: _ddate,
+                                  ),
+                                ),
+                              );
                             }
                           },
                           child: AbsorbPointer(
-                            child: Expanded(
-                              child: TextFormField(
-                                enabled: isChecked ? true : false,
-                                decoration: InputDecoration(hintText: '2120', border: InputBorder.none),
+                            child: TextFormField(
+                              enabled: _isChecked,
+                              decoration: InputDecoration(
+                                hintText: _ddate,
+                                hintStyle: TextStyle(color: _isChecked ? Colors.black : Colors.white),
+                                border: InputBorder.none,
                               ),
                             ),
                           ),
@@ -96,10 +138,10 @@ class _ProfileSettingState extends State<ProfileSetting> {
                       Spacer(),
                       CupertinoSwitch(
                         activeColor: PRIMARY_COLOR,
-                        value: isChecked,
+                        value: _isChecked,
                         onChanged: (bool value) {
                           setState(() {
-                            isChecked = value;
+                            _isChecked = value;
                           });
                         },
                       ),
@@ -133,13 +175,17 @@ class _ProfileSettingState extends State<ProfileSetting> {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => ProfileForm(label: label, hint: hint)));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ProfileForm(label: label, hint: hint),
+                  ),
+                );
               },
               child: AbsorbPointer(
-                child: Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(hintText: hint, border: InputBorder.none),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    border: InputBorder.none,
                   ),
                 ),
               ),

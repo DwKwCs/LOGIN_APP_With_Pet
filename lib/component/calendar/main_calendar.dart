@@ -12,6 +12,10 @@ class MainCalendar extends StatelessWidget {
     required this.selectedDate,
   });
 
+  bool isWeekend(DateTime day) {
+    return day.weekday == DateTime.saturday || day.weekday == DateTime.sunday;
+  }
+
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
@@ -32,7 +36,7 @@ class MainCalendar extends StatelessWidget {
         ),
       ),
       daysOfWeekHeight: 40,
-      calendarStyle: const CalendarStyle(
+      calendarStyle: CalendarStyle(
         tablePadding: EdgeInsets.only(left: 5, right: 5),
         tableBorder: TableBorder(
           bottom: BorderSide(
@@ -47,12 +51,13 @@ class MainCalendar extends StatelessWidget {
         ),
         isTodayHighlighted: false,
         selectedTextStyle: TextStyle(
-          color: Colors.black,
+          color: isWeekend(selectedDate) ? Colors.grey : Colors.black,
         ),
         selectedDecoration: BoxDecoration(
           color: PRIMARY_COLOR,
           shape: BoxShape.circle,
         ),
+        weekendTextStyle: TextStyle(color: Colors.grey),
         cellAlignment: Alignment.topLeft,
         outsideDaysVisible: false,
       ),

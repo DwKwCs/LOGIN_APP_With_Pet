@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:login_with_pet/component/home/profile_setting.dart';
 import 'package:login_with_pet/component/home/home_setting.dart';
 
-class HomeScreen extends StatelessWidget {
-  bool isChecked = true;
+class HomeScreen extends StatefulWidget {
+  const HomeScreen ({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  bool isChecked = false;
+  String name = '이름';
+  String comment = '한마디';
+  String date = '2020.02.02';
+  String ddate = '2222.02.02';
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +41,25 @@ class HomeScreen extends StatelessWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.create_outlined),
-                  onPressed: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) => ProfileSetting()));
+                  onPressed: () async {
+                    final result = await Navigator.of(context)
+                        .push(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ProfileSetting(
+                                  isChecked: isChecked,
+                                  name: name,
+                                  comment: comment,
+                                  date: date,
+                                  ddate: ddate,
+                                )));
+                    setState(() {
+                      isChecked = result['isChecked'];
+                      name = result['name'];
+                      comment = result['comment'];
+                      date = result['date'];
+                      ddate = result['ddate'];
+                    });
                   },
                 ),
               ],
@@ -43,25 +70,23 @@ class HomeScreen extends StatelessWidget {
               backgroundImage: AssetImage('asset/img/basic_profile_img.jpg'),
             ),
             Text(
-              style: TextStyle(
-                height: 2,
-                fontSize: 30,
-                fontWeight: FontWeight.w600,
-              ),
-              '이름',
+              style: TextStyle(height: 2, fontSize: 30, fontWeight: FontWeight.w600),
+              name,
+            ),
+            Text(
+              style: TextStyle(height: 2, fontSize: 20),
+              comment,
+            ),
+            Text(
+              style: TextStyle(height: 2),
+              date,
             ),
             Text(
               style: TextStyle(
                 height: 2,
-                fontSize: 20,
+                color: isChecked ? Colors.black : Colors.white,
               ),
-              '한마디',
-            ),
-            Text(
-              style: TextStyle(
-                height: 2,
-              ),
-              '날짜',
+              ddate,
             ),
           ],
         ),

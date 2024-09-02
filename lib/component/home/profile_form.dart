@@ -15,6 +15,9 @@ class ProfileForm extends StatefulWidget {
 }
 
 class _ProfileFormState extends State<ProfileForm> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,57 +28,70 @@ class _ProfileFormState extends State<ProfileForm> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: const Icon(Icons.chevron_left),
+          icon: const Icon(Icons.chevron_left, color: Colors.black),
         ),
         title: Text(
           widget.label,
-          style: TextStyle(fontWeight: FontWeight.w700),
+          style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.black),
         ),
         centerTitle: true,
+        elevation: 0,
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 20),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            child: Padding(
-              padding: EdgeInsets.only(left: 25, right: 25),
-              child: Expanded(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Form(
+                key: _formKey,
                 child: TextFormField(
+                  controller: _controller,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '내용을 입력해주세요!';
+                    }
+                    return null;
+                  },
                   decoration: InputDecoration(
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     labelText: widget.hint,
-                    labelStyle: TextStyle(color: Colors.black),
+                    labelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
-                      borderSide: BorderSide(color: Colors.black, width: 2),
+                      borderSide: const BorderSide(color: Colors.black, width: 2),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
-                      borderSide: BorderSide(color: Colors.black, width: 2),
+                      borderSide: const BorderSide(color: Colors.black, width: 2),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-          SizedBox(height: 10),
-          Container(
-            padding: EdgeInsets.only(left: 25, right: 25),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Center(
-                child: Text(
-                  '완료',
-                  style: TextStyle(fontSize: 15, color: Colors.white),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      Navigator.of(context).pop(widget.hint);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    '완료',
+                    style: TextStyle(fontSize: 15, color: Colors.white),
+                  ),
                 ),
               ),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
