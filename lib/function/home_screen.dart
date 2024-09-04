@@ -13,6 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isChecked = false;
   String name = '이름';
   String comment = '한마디';
+  String species = '리트리버';
   String date = '2020.02.02';
   String ddate = '2222.02.02';
 
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   isChecked: isChecked,
                                   name: name,
                                   comment: comment,
+                                  species: species,
                                   date: date,
                                   ddate: ddate,
                                 )));
@@ -57,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       isChecked = result['isChecked'];
                       name = result['name'];
                       comment = result['comment'];
+                      species = result['species'];
                       date = result['date'];
                       ddate = result['ddate'];
                     });
@@ -65,13 +68,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            CircleAvatar(
-              radius: 110,
-              backgroundImage: AssetImage('asset/img/basic_profile_img.jpg'),
+            GestureDetector(
+              onTap: () {},
+              child: CircleAvatar(
+                radius: 110,
+                backgroundImage: AssetImage('asset/img/basic_profile_img.jpg'),
+              ),
             ),
             Text(
               style: TextStyle(height: 2, fontSize: 30, fontWeight: FontWeight.w600),
-              name,
+              name + '(은)는  ' + species,
             ),
             Text(
               style: TextStyle(height: 2, fontSize: 20),

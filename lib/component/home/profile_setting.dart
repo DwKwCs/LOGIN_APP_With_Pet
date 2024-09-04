@@ -7,6 +7,7 @@ class ProfileSetting extends StatefulWidget {
   final bool isChecked;
   final String name;
   final String comment;
+  final String species;
   final String date;
   final String ddate;
 
@@ -14,6 +15,7 @@ class ProfileSetting extends StatefulWidget {
     required this.isChecked,
     required this.name,
     required this.comment,
+    required this.species,
     required this.date,
     required this.ddate,
     Key? key,
@@ -29,6 +31,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
   late bool _isChecked;
   late String _name;
   late String _comment;
+  late String _species;
   late String _date;
   late String _ddate;
 
@@ -38,6 +41,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
     _isChecked = widget.isChecked;
     _name = widget.name;
     _comment = widget.comment;
+    _species = widget.species;
     _date = widget.date;
     _ddate = widget.ddate;
   }
@@ -70,6 +74,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                       'isChecked': _isChecked,
                       'name': _name,
                       'comment': _comment,
+                      'species': _species,
                       'date': _date,
                       'ddate': _ddate,
                     });
@@ -89,7 +94,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
               children: [
                 _buildProfileRow('이름', _name, 40),
                 _buildProfileRow('한마디', _comment, 20),
-                _buildProfileRow('종', '리트리버', 56),
+                _buildProfileRow('종', _species, 56),
                 _buildProfileRow('생일', _date, 38),
                 Container(
                   height: 70,
@@ -105,22 +110,23 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
-                          color: _isChecked ? Colors.black : Colors.grey[300],
+                          color: _isChecked ? Colors.black : Colors.white,
                         ),
                       ),
                       SizedBox(width: 38),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             if (_isChecked) {
-                              Navigator.of(context).push(
+                              String str = await Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => ProfileForm(
                                     label: '기일',
-                                    hint: _ddate,
+                                    text: _ddate,
                                   ),
                                 ),
                               );
+                              _ddate = str;
                             }
                           },
                           child: AbsorbPointer(
@@ -157,7 +163,9 @@ class _ProfileSettingState extends State<ProfileSetting> {
     );
   }
 
-  Widget _buildProfileRow(String label, String hint, double labelWidth) {
+  Widget _buildProfileRow(String label, String text, double labelWidth) {
+    String edited;
+
     return Container(
       height: 70,
       width: MediaQuery.of(context).size.width,
@@ -174,17 +182,33 @@ class _ProfileSettingState extends State<ProfileSetting> {
           SizedBox(width: labelWidth),
           Expanded(
             child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(
+              onTap: () async {
+                edited = await Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => ProfileForm(label: label, hint: hint),
+                    builder: (context) => ProfileForm(label: label, text: text),
                   ),
                 );
+                setState(() {
+                  switch(label) {
+                    case '이름':
+                      _name = edited;
+                      break;
+                    case '한마디':
+                      _comment = edited;
+                      break;
+                    case '종':
+                      _species = edited;
+                      break;
+                    case '생일':
+                      _date = edited;
+                      break;
+                  }
+                });
               },
               child: AbsorbPointer(
                 child: TextFormField(
+                  initialValue: text,
                   decoration: InputDecoration(
-                    hintText: hint,
                     border: InputBorder.none,
                   ),
                 ),

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class ProfileForm extends StatefulWidget {
   final String label;
-  final String hint;
+  final String text;
 
   const ProfileForm({
     required this.label,
-    required this.hint,
+    required this.text,
     Key? key,
   }) : super(key: key);
 
@@ -45,16 +45,17 @@ class _ProfileFormState extends State<ProfileForm> {
               Form(
                 key: _formKey,
                 child: TextFormField(
-                  controller: _controller,
+                  //controller: _controller,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '내용을 입력해주세요!';
                     }
                     return null;
                   },
+                  initialValue: widget.text,
                   decoration: InputDecoration(
                     floatingLabelBehavior: FloatingLabelBehavior.never,
-                    labelText: widget.hint,
+                    labelText: widget.text,
                     labelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
@@ -73,7 +74,7 @@ class _ProfileFormState extends State<ProfileForm> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      Navigator.of(context).pop(widget.hint);
+                      Navigator.of(context).pop('${widget.text}');
                     }
                   },
                   style: ElevatedButton.styleFrom(
