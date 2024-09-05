@@ -18,6 +18,7 @@ class ProfileForm extends StatefulWidget {
 
 class _ProfileFormState extends State<ProfileForm> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _controller = TextEditingController();
 
   late String _text;
   late bool isEmpty = true;
@@ -25,7 +26,15 @@ class _ProfileFormState extends State<ProfileForm> {
   @override
   void initState() {
     super.initState();
+    if(widget.text == null) {_controller.text = '';}
+    else {_controller.text = widget.text ?? '';}
     _text = widget.text ?? '';
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -54,10 +63,10 @@ class _ProfileFormState extends State<ProfileForm> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-
               Form(
                 key: _formKey,
                 child: TextFormField(
+                  controller: _controller,
                   onSaved: (value) {
                     setState(() {
                       _text = value ?? '';

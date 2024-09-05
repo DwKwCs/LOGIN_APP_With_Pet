@@ -11,11 +11,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isChecked = false;
-  String name = '고영희';
-  String comment = '귀여운 고양이';
-  String species = '렉돌';
-  String date = '2020.02.02';
-  String ddate = '2222.02.02';
+  String name = '';
+  String comment = '';
+  String species = '';
+  String date = '';
+  String ddate = '';
 
   @override
   Widget build(BuildContext context) {

@@ -39,6 +39,10 @@ class _ProfileSettingState extends State<ProfileSetting> {
 
   XFile? file;
 
+  bool isNull(String? str) {
+    return str == '';
+  }
+
   Future<void> _pickImage() async {
     ImagePicker().pickImage(source: ImageSource.gallery).then((image) {
       if (image != null) {
@@ -144,13 +148,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                           _name = await Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ProfileForm(label: '이름', hint: _name),
+                                  ProfileForm(label: '이름', hint: 'ex)고영희', text: _name),
                             ),
                           );
                           setState(() {});
                         },
                         child: Text(
-                          _name,
+                          isNull(_name) ? 'ex)고영희' : _name,
                           textAlign: TextAlign.start,
                           style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
                         ),
@@ -183,13 +187,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         onPressed: () async {
                          _species = await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ProfileForm(label: '품종', hint: _species),
+                              builder: (context) => ProfileForm(label: '품종', hint: 'ex)렉돌', text: _species),
                             ),
                           );
                           setState(() {});
                         },
                         child: Text(
-                          _species,
+                          isNull(_species) ? 'ex)렉돌' : _species,
                           textAlign: TextAlign.start,
                           style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
                         ),
@@ -222,13 +226,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         onPressed: () async {
                           _comment = await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ProfileForm(label: '한마디', hint: _comment),
+                              builder: (context) => ProfileForm(label: '한마디', hint: 'ex)귀여운 고양이', text: _comment),
                             ),
                           );
                           setState(() {});
                         },
                         child: Text(
-                          _comment,
+                          isNull(_comment) ? 'ex)귀여운 고양이' : _comment,
                           textAlign: TextAlign.start,
                           style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
                         ),
@@ -261,13 +265,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         onPressed: () async {
                           _date = await Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => ProfileForm(label: '생일', hint: _date),
+                              builder: (context) => ProfileForm(label: '생일', hint: 'ex)YYYY.MM.DD', text: _date),
                             ),
                           );
                           setState(() {});
                         },
                         child: Text(
-                          _date,
+                          isNull(_date) ? 'ex)YYYY.MM.DD' : _date,
                           textAlign: TextAlign.start,
                           style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
                         ),
@@ -303,7 +307,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                                   builder: (context) => ProfileForm(
                                     label: '기일',
                                     hint: 'ex)YYYY.MM.DD',
-                                    text: _ddate,
+                                    text: _ddate
                                   ),
                                 ),
                               );
@@ -314,7 +318,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                             child: TextFormField(
                               enabled: _isChecked,
                               decoration: InputDecoration(
-                                hintText: _ddate,
+                                hintText: isNull(_ddate) ? 'ex)YYYY.MM.DD' : _ddate,
                                 hintStyle: TextStyle(color: _isChecked ? Colors.black : Colors.white),
                                 border: InputBorder.none,
                               ),
