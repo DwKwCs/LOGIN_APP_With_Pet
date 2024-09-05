@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:login_with_pet/const/colors.dart';
 import 'package:login_with_pet/component/home/profile_form.dart';
 
@@ -34,6 +36,18 @@ class _ProfileSettingState extends State<ProfileSetting> {
   late String _species;
   late String _date;
   late String _ddate;
+
+  XFile? file;
+
+  Future<void> _pickImage() async {
+    ImagePicker().pickImage(source: ImageSource.gallery).then((image) {
+      if (image != null) {
+        setState(() {
+          file = image;
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -84,18 +98,184 @@ class _ProfileSettingState extends State<ProfileSetting> {
               ],
             ),
             const SizedBox(height: 40),
-            CircleAvatar(
-              radius: 70,
-              backgroundColor: Colors.white,
-              backgroundImage: AssetImage('asset/img/basic_profile_img.jpg'),
+            GestureDetector(
+              onTap: () {_pickImage();},
+              child: CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.white,
+                backgroundImage: AssetImage('asset/img/basic_profile_img.jpg'),
+                child: (file != null)
+                    ? Image.file(
+                  File(file!.path),
+                  fit: BoxFit.cover,
+                )
+                    : const Icon(
+                  Icons.image,
+                  size: 30,
+                  color: Colors.grey,
+                ),
+              ),
             ),
             const SizedBox(height: 10),
             Column(
               children: [
-                _buildProfileRow('이름', _name, 40),
-                _buildProfileRow('한마디', _comment, 20),
-                _buildProfileRow('종', _species, 56),
-                _buildProfileRow('생일', _date, 38),
+                Container(
+                  height: 70,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(left: 20),
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: SUB_COLOR1, width: 1)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 80,
+                        child: const Text(
+                          '이   름',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        ),
+                        onPressed: () async {
+                          _name = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProfileForm(label: '이름', hint: _name),
+                            ),
+                          );
+                          setState(() {});
+                        },
+                        child: Text(
+                          _name,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 70,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(left: 20),
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: SUB_COLOR1, width: 1)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 80,
+                        child: const Text(
+                          '품   종',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        ),
+                        onPressed: () async {
+                         _species = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileForm(label: '품종', hint: _species),
+                            ),
+                          );
+                          setState(() {});
+                        },
+                        child: Text(
+                          _species,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 70,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(left: 20),
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: SUB_COLOR1, width: 1)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 80,
+                        child: const Text(
+                          '한마디',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        ),
+                        onPressed: () async {
+                          _comment = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileForm(label: '한마디', hint: _comment),
+                            ),
+                          );
+                          setState(() {});
+                        },
+                        child: Text(
+                          _comment,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                    ],
+                  ),
+                ),
+                Container(
+                  height: 70,
+                  width: MediaQuery.of(context).size.width,
+                  padding: const EdgeInsets.only(left: 20),
+                  decoration: const BoxDecoration(
+                    border: Border(bottom: BorderSide(color: SUB_COLOR1, width: 1)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 80,
+                        child: const Text(
+                          '생   일',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                        ),
+                      ),
+                      TextButton(
+                        style: ButtonStyle(
+                          overlayColor: WidgetStateProperty.all<Color>(Colors.transparent),
+                        ),
+                        onPressed: () async {
+                          _date = await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileForm(label: '생일', hint: _date),
+                            ),
+                          );
+                          setState(() {});
+                        },
+                        child: Text(
+                          _date,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                    ],
+                  ),
+                ),
                 Container(
                   height: 70,
                   width: MediaQuery.of(context).size.width,
@@ -118,15 +298,16 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         child: GestureDetector(
                           onTap: () async {
                             if (_isChecked) {
-                              String str = await Navigator.of(context).push(
+                              _ddate = await Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => ProfileForm(
                                     label: '기일',
+                                    hint: 'ex)YYYY.MM.DD',
                                     text: _ddate,
                                   ),
                                 ),
                               );
-                              _ddate = str;
+                              setState(() {});
                             }
                           },
                           child: AbsorbPointer(
@@ -159,64 +340,6 @@ class _ProfileSettingState extends State<ProfileSetting> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildProfileRow(String label, String text, double labelWidth) {
-    String edited;
-
-    return Container(
-      height: 70,
-      width: MediaQuery.of(context).size.width,
-      padding: const EdgeInsets.only(left: 20),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: SUB_COLOR1, width: 1)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
-          ),
-          SizedBox(width: labelWidth),
-          Expanded(
-            child: GestureDetector(
-              onTap: () async {
-                edited = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ProfileForm(label: label, text: text),
-                  ),
-                );
-                setState(() {
-                  switch(label) {
-                    case '이름':
-                      _name = edited;
-                      break;
-                    case '한마디':
-                      _comment = edited;
-                      break;
-                    case '종':
-                      _species = edited;
-                      break;
-                    case '생일':
-                      _date = edited;
-                      break;
-                  }
-                });
-              },
-              child: AbsorbPointer(
-                child: TextFormField(
-                  initialValue: text,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 20),
-        ],
       ),
     );
   }

@@ -11,9 +11,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isChecked = false;
-  String name = '이름';
-  String comment = '한마디';
-  String species = '리트리버';
+  String name = '고영희';
+  String comment = '귀여운 고양이';
+  String species = '렉돌';
   String date = '2020.02.02';
   String ddate = '2222.02.02';
 

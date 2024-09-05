@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 class ProfileForm extends StatefulWidget {
   final String label;
-  final String text;
+  final String hint;
+  final String? text;
 
   const ProfileForm({
     required this.label,
-    required this.text,
+    required this.hint,
+    this.text,
     Key? key,
   }) : super(key: key);
 
@@ -16,10 +18,20 @@ class ProfileForm extends StatefulWidget {
 
 class _ProfileFormState extends State<ProfileForm> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _controller = TextEditingController();
+
+  late String _text;
+  late bool isEmpty = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _text = widget.text ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
+    if(_text != null) {isEmpty = false;}
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -42,21 +54,24 @@ class _ProfileFormState extends State<ProfileForm> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
+
               Form(
                 key: _formKey,
                 child: TextFormField(
-                  //controller: _controller,
+                  onSaved: (value) {
+                    setState(() {
+                      _text = value ?? '';
+                    });
+                  },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return '내용을 입력해주세요!';
                     }
                     return null;
                   },
-                  initialValue: widget.text,
                   decoration: InputDecoration(
+                    labelText: widget.hint,
                     floatingLabelBehavior: FloatingLabelBehavior.never,
-                    labelText: widget.text,
-                    labelStyle: const TextStyle(color: Colors.black),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15.0),
                       borderSide: const BorderSide(color: Colors.black, width: 2),
@@ -74,7 +89,8 @@ class _ProfileFormState extends State<ProfileForm> {
                 child: ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      Navigator.of(context).pop('${widget.text}');
+                      _formKey.currentState!.save();
+                      Navigator.of(context).pop(_text);
                     }
                   },
                   style: ElevatedButton.styleFrom(
