@@ -6,6 +6,7 @@ import 'package:login_with_pet/const/colors.dart';
 import 'package:login_with_pet/component/home/profile_form.dart';
 
 class ProfileSetting extends StatefulWidget {
+  final XFile? imgFile;
   final bool isChecked;
   final String name;
   final String comment;
@@ -14,6 +15,7 @@ class ProfileSetting extends StatefulWidget {
   final String ddate;
 
   const ProfileSetting({
+    required this.imgFile,
     required this.isChecked,
     required this.name,
     required this.comment,
@@ -30,14 +32,13 @@ class ProfileSetting extends StatefulWidget {
 class _ProfileSettingState extends State<ProfileSetting> {
   final formKey = GlobalKey<FormState>();
 
+  late XFile? _imgFile;
   late bool _isChecked;
   late String _name;
   late String _comment;
   late String _species;
   late String _date;
   late String _ddate;
-
-  XFile? file;
 
   bool isNull(String? str) {
     return str == '';
@@ -47,7 +48,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
     ImagePicker().pickImage(source: ImageSource.gallery).then((image) {
       if (image != null) {
         setState(() {
-          file = image;
+          _imgFile = image;
         });
       }
     });
@@ -56,6 +57,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
   @override
   void initState() {
     super.initState();
+    _imgFile = widget.imgFile;
     _isChecked = widget.isChecked;
     _name = widget.name;
     _comment = widget.comment;
@@ -89,6 +91,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 IconButton(
                   onPressed: () {
                     Navigator.of(context).pop({
+                      'imgFile': _imgFile,
                       'isChecked': _isChecked,
                       'name': _name,
                       'comment': _comment,
@@ -107,17 +110,15 @@ class _ProfileSettingState extends State<ProfileSetting> {
               child: CircleAvatar(
                 radius: 70,
                 backgroundColor: Colors.white,
-                backgroundImage: AssetImage('asset/img/basic_profile_img.jpg'),
-                child: (file != null)
+                child: (_imgFile != null)
                     ? Image.file(
-                  File(file!.path),
-                  fit: BoxFit.cover,
-                )
-                    : const Icon(
-                  Icons.image,
-                  size: 30,
-                  color: Colors.grey,
-                ),
+                        File(_imgFile!.path),
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'asset/img/basic_profile_img.jpg', // 선택된 파일이 없을 때 사용할 이미지
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             const SizedBox(height: 10),
@@ -289,16 +290,19 @@ class _ProfileSettingState extends State<ProfileSetting> {
                   ),
                   child: Row(
                     children: [
+                      SizedBox(width: 13),
                       Text(
-                        '기일',
+                        '기   일',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: _isChecked ? Colors.black : Colors.white,
                         ),
                       ),
-                      SizedBox(width: 38),
-                      Expanded(
+                      SizedBox(width: 24),
+                      Container(
+                        width: 200,
                         child: GestureDetector(
                           onTap: () async {
                             if (_isChecked) {
@@ -319,7 +323,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                               enabled: _isChecked,
                               decoration: InputDecoration(
                                 hintText: isNull(_ddate) ? 'ex)YYYY.MM.DD' : _ddate,
-                                hintStyle: TextStyle(color: _isChecked ? Colors.black : Colors.white),
+                                hintStyle: TextStyle(color: _isChecked ? Colors.black : Colors.white, fontWeight: FontWeight.w400),
                                 border: InputBorder.none,
                               ),
                             ),

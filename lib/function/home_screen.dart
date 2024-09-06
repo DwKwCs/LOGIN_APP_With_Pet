@@ -1,4 +1,7 @@
+import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:login_with_pet/component/home/profile_setting.dart';
 import 'package:login_with_pet/component/home/home_setting.dart';
 
@@ -10,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  XFile? imgFile;
   bool isChecked = false;
   String name = '';
   String comment = '';
@@ -48,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(
                             builder: (context) =>
                                 ProfileSetting(
+                                  imgFile: imgFile,
                                   isChecked: isChecked,
                                   name: name,
                                   comment: comment,
@@ -56,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ddate: ddate,
                                 )));
                     setState(() {
+                      imgFile = result['imgFile'];
                       isChecked = result['isChecked'];
                       name = result['name'];
                       comment = result['comment'];
@@ -72,12 +78,21 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {},
               child: CircleAvatar(
                 radius: 110,
-                backgroundImage: AssetImage('asset/img/basic_profile_img.jpg'),
+                backgroundColor: Colors.white,
+                child: (imgFile != null)
+                    ? Image.file(
+                        File(imgFile!.path),
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'asset/img/basic_profile_img.jpg', // 선택된 파일이 없을 때 사용할 이미지
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             Text(
               style: TextStyle(height: 2, fontSize: 30, fontWeight: FontWeight.w600),
-              name + '(은)는  ' + species,
+              name + ' (은)는  ' + species,
             ),
             Text(
               style: TextStyle(height: 2, fontSize: 20),
