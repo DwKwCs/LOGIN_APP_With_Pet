@@ -5,7 +5,9 @@ class All3 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Text('Text3'),
+      body: Center(
+        child: Text('건강'),
+    ),
     );
   }
 }

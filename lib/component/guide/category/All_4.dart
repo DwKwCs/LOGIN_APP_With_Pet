@@ -5,7 +5,9 @@ class All4 extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Text('Text4'),
+      body: Center(
+        child: Text('음식'),
+      ),
     );
   }
 }

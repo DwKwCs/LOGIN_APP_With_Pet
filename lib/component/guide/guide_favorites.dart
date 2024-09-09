@@ -36,27 +36,8 @@ class _FavortiesScreenState extends State<FavoritesScreen> with SingleTickerProv
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: DefaultTabController(
-          length: 4,
-          child: ButtonsTabBar(
-            buttonMargin: EdgeInsets.only(top : 20, left: 40),
-            contentPadding: EdgeInsets.symmetric(horizontal: 10),
-            splashColor: Colors.transparent,
-            backgroundColor: SUB_COLOR2,
-            borderWidth: 1,
-            borderColor: PRIMARY_COLOR,
-            unselectedBorderColor: SUB_COLOR2,
-            unselectedBackgroundColor: SUB_COLOR1,
-            unselectedLabelStyle: TextStyle(color: Colors.black),
-            labelStyle: TextStyle(color: Colors.black, fontSize: 20),
-            radius: 80,
-            tabs: const [
-              Tab(text: 'Text1'),
-              Tab(text: 'Text2'),
-              Tab(text: 'Text3'),
-              Tab(text: 'Text4'),
-            ],
-          ),
+        child: Center(
+          child: Text('즐겨찾기 가이드'),
         ),
       ),
     );
