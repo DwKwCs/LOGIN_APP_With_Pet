@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:login_with_pet/const/colors.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:login_with_pet/component/guide/guide_card.dart';
 
 class All1 extends StatelessWidget {
@@ -17,13 +16,13 @@ class All1 extends StatelessWidget {
               height: 30,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: SUB_COLOR2, width: 3)),
+                border: Border(bottom: BorderSide(color: Colors.transparent, width: 3)),
               ),
               child: Text(
                 '총 5개의 가이드',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey,
+                  color: Color(0xFFCAC7C4),
                 ),
               ),
             ),

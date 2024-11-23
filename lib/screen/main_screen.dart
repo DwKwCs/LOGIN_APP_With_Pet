@@ -54,29 +54,45 @@ class _MainScreenState extends State<MainScreen> {
             backgroundColor: Colors.white,
             type: BottomNavigationBarType.fixed,
             currentIndex: _selectedIndex,
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.grey[400],
+            selectedItemColor: Color(0xFF4F453C),
+            unselectedItemColor: Color(0xFFCAC7C4),
             showUnselectedLabels: true,
             onTap: _onTapped,
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.pets),
+                icon: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: _selectedIndex == 0 ? Image.asset('asset/icons/paw_dark.png') : Image.asset('asset/icons/paw_light.png'),
+                ),
                 label: '홈',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.mail_outline),
+                icon: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: _selectedIndex == 1 ? Image.asset('asset/icons/envelope_dark.png') : Image.asset('asset/icons/envelope_light.png'),
+                ),
                 label: '편지',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.edit_calendar_rounded),
+                icon: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: _selectedIndex == 2 ? Image.asset('asset/icons/calendar_dark.png') : Image.asset('asset/icons/calendar_light.png'),
+                ),
                 label: '캘린더',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.info_outline),
+                icon: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: _selectedIndex == 3 ? Image.asset('asset/icons/assept-document_dark.png') : Image.asset('asset/icons/assept-document_light.png'),
+                ),
                 label: '가이드',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.maps_home_work_outlined),
+                icon: Image.asset('asset/icons/search.png'),
                 label: '지도',
               ),
             ],

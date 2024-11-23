@@ -17,7 +17,7 @@ class _GuideAllScreenState extends State<GuideAllScreen> {
   final PageController _pageController = PageController(initialPage: 0);
 
   final List<String> categories = ['전체', '임종', '건강', '음식'];
-  final TextStyle textStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+  final TextStyle textStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w400);
   final BorderRadius borderRadius = BorderRadius.circular(80);
 
   @override
@@ -27,7 +27,7 @@ class _GuideAllScreenState extends State<GuideAllScreen> {
       body: Column(
         children: [
           Container(
-            height: 40,
+            height: 37,
             width: MediaQuery.of(context).size.width,
             margin: const EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 15),
             child: ToggleButtons(
@@ -61,14 +61,14 @@ class _GuideAllScreenState extends State<GuideAllScreen> {
 
   Widget _buildToggleButton(int index) {
     return Container(
-      width: 80,
-      margin: const EdgeInsets.symmetric(horizontal: 6),
+      width: 83,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: isSelected[index] ? SUB_COLOR2 : SUB_COLOR1,
+        color: isSelected[index] ? Color(0xFFFFF1D4) : Color(0xFFF9F6F3),
         borderRadius: borderRadius,
         border: isSelected[index]
-            ? Border.all(width: 1, color: const Color(0xffffdfa9))
-            : Border.all(width: 1, color: const Color(0xfff1ede6)),
+            ? Border.all(width: 1, color: const Color(0xFFFFDFA9))
+            : Border.all(width: 1, color: const Color(0xFFF1EDE6)),
       ),
       child: Center(
         child: Text(

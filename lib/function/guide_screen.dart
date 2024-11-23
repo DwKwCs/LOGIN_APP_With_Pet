@@ -66,7 +66,7 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),
-      unselectedLabelColor: Colors.grey[400],
+      unselectedLabelColor: Color(0xFFCAC7C4),
       controller: _tabController,
       tabs: const [
         Tab(

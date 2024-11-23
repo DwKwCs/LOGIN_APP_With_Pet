@@ -28,7 +28,7 @@ class GuideCardState extends State<GuideCard> {
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(left: 15, right: 15),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: SUB_COLOR2, width: 1)),
+        border: Border(bottom: BorderSide(color: Color(0xFFF1EDE6), width: 1)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -82,7 +82,7 @@ class GuideCardState extends State<GuideCard> {
                     percent: widget.percent,
                     barRadius: Radius.circular(10),
                     backgroundColor: Colors.grey[300],
-                    progressColor: Colors.orange,
+                    progressColor: Color(0xFFFFC873),
                   ),
                   Text((widget.percent * 100).toString() + '%'),
                 ],

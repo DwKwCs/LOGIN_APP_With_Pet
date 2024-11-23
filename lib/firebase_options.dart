@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:887708456519:android:27b763dc2b891602f60362',
     messagingSenderId: '887708456519',
     projectId: 'login-with-pet',
-    storageBucket: 'login-with-pet.appspot.com',
+    storageBucket: 'login-with-pet.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

@@ -1,7 +1,9 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:login_with_pet/component/home/profile_setting.dart';
 import 'package:login_with_pet/component/home/home_setting.dart';
 
@@ -21,6 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String date = '';
   String ddate = '';
 
+  FirebaseDatabase database = FirebaseDatabase.instance;
+  DatabaseReference ref = FirebaseDatabase.instance.ref("DB");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               elevation: 0.0,
               leading: IconButton(
-                icon: const Icon(Icons.settings_outlined),
+                icon: Image.asset('asset/icons/settings.png'),
                 onPressed: () {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (context) => HomeSetting()));
@@ -45,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.create_outlined),
+                  icon: Image.asset('asset/icons/pencil.png'),
                   onPressed: () async {
                     final result = await Navigator.of(context)
                         .push(
@@ -85,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         fit: BoxFit.cover,
                       )
                     : Image.asset(
-                        'asset/img/basic_profile_img.jpg', // 선택된 파일이 없을 때 사용할 이미지
+                        'asset/img/basic_profile_img.jpg',
                         fit: BoxFit.cover,
                       ),
               ),
