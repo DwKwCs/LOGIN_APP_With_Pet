@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login_with_pet/component/map_info/map_hospital.dart';
-import 'package:login_with_pet/component/map_info/map_funeral_hall.dart';
+import 'package:login_withpet/component/map_info/map_hospital.dart';
+import 'package:login_withpet/component/map_info/map_funeral_hall.dart';
 
 class InfoScreen extends StatefulWidget {
-  const InfoScreen({Key? key}) : super(key: key);
+  const InfoScreen({super.key});
 
   @override
   State<InfoScreen> createState() => _InfoScreenState();
@@ -22,7 +22,7 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
       animationDuration: Duration.zero,
     );
     tabController!.addListener(
-        () => setState(() =>  _selectedIndex = tabController!.index)
+            () => setState(() =>  _selectedIndex = tabController!.index)
     );
   }
 
@@ -40,8 +40,8 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
-          '지도',
-          style: TextStyle(fontWeight: FontWeight.w800)
+            '지도',
+            style: TextStyle(fontWeight: FontWeight.w800)
         ),
       ),
       body: Column(
@@ -57,7 +57,7 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
 
   Widget _tabBar() {
     return TabBar(
-      overlayColor: MaterialStateProperty.all<Color>(Colors.white),
+      overlayColor: WidgetStateProperty.all<Color>(Colors.white),
       indicatorColor: Colors.black,
       indicatorWeight: 5,
       indicatorSize: TabBarIndicatorSize.tab,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login_with_pet/component/calendar/schedule_text_field.dart';
-import 'package:login_with_pet/const/colors.dart';
+import 'package:login_withpet/component/calendar/schedule_text_field.dart';
+import 'package:login_withpet/const/colors.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
-  const ScheduleBottomSheet({Key? key}) : super(key: key);
+  const ScheduleBottomSheet({super.key});
 
   @override
   State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();

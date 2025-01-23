@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:login_with_pet/component/guide/guide_all.dart';
-import 'package:login_with_pet/component/guide/guide_favorites.dart';
+import 'package:login_withpet/component/guide/guide_all.dart';
+import 'package:login_withpet/component/guide/guide_saved.dart';
+import 'package:login_withpet/database/db_helper.dart';
 
 class GuideScreen extends StatefulWidget {
-  const GuideScreen({Key? key}) : super(key: key);
+  const GuideScreen({super.key});
 
   @override
   State<GuideScreen> createState() => _GuideScreenState();
@@ -21,13 +22,27 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
       vsync: this,
       animationDuration: Duration.zero,
     );
-    _tabController!.addListener(
-            () => setState(() =>  _selectedIndex = _tabController!.index)
-    );
+    _tabController!.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    setState(() {
+      _selectedIndex = _tabController!.index;
+    });
+
+    // 탭 변경에 따라 데이터 로드
+    if (_selectedIndex == 0) {
+      DatabaseHelper().getAllGuides(); // 모든 가이드
+    } else if (_selectedIndex == 1) {
+      DatabaseHelper().getSavedGuides(); // 저장된 가이드
+    }
+
+    setState(() {});
   }
 
   @override
   void dispose() {
+    _tabController!.removeListener(_onTabChanged);
     _tabController!.dispose();
     super.dispose();
   }
@@ -85,7 +100,7 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
       controller: _tabController,
       children: [
         GuideAllScreen(),
-        FavoritesScreen(),
+        SavedGuideScreen(),
       ],
     );
   }

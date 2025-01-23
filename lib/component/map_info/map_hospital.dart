@@ -6,7 +6,7 @@ class WebViewHospital extends StatelessWidget {
     ..loadRequest(Uri.parse('https://www.vethonors.com/hospitals/'))
     ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
-  WebViewHospital({Key? key}) : super(key: key);
+  WebViewHospital({super.key});
 
   @override
   Widget build(BuildContext context) {

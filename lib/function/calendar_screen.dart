@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:login_with_pet/component/calendar/main_calendar.dart';
-import 'package:login_with_pet/component/calendar/today_banner.dart';
-import 'package:login_with_pet/component/calendar/schedule_card.dart';
-import 'package:login_with_pet/component/calendar/schedule_bottom_sheet.dart';
-import 'package:login_with_pet/const/colors.dart';
+import 'package:login_withpet/component/calendar/main_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
-  const CalendarScreen({Key? key}) : super(key: key);
+  const CalendarScreen({super.key});
 
   @override
   State<CalendarScreen> createState() => _CalendarScreenState();

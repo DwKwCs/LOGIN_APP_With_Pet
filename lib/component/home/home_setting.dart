@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:login_with_pet/const/colors.dart';
-import 'package:login_with_pet/component/home/notification_setting.dart';
-import 'package:login_with_pet/component/home/announce_setting.dart';
+import 'package:login_withpet/const/colors.dart';
+import 'package:login_withpet/component/home/notification_setting.dart';
+import 'package:login_withpet/component/home/announce_setting.dart';
 
 class HomeSetting extends StatelessWidget {
   final formKey = GlobalKey<FormState>();
+
+  HomeSetting({super.key});
 
   @override
   Widget build(BuildContext context) {

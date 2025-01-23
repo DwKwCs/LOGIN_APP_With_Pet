@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:login_with_pet/const/colors.dart';
-import 'package:login_with_pet/component/guide/category/All_1.dart';
-import 'package:login_with_pet/component/guide/category/All_2.dart';
-import 'package:login_with_pet/component/guide/category/All_3.dart';
-import 'package:login_with_pet/component/guide/category/All_4.dart';
+import 'package:login_withpet/component/guide/category/guide_all_catergory.dart';
+import 'package:login_withpet/component/guide/category/guide_rainbow_bridget.dart';
+import 'package:login_withpet/component/guide/category/guide_health.dart';
+import 'package:login_withpet/component/guide/category/guide_diet.dart';
+import 'package:login_withpet/database/db_helper.dart';
 
 class GuideAllScreen extends StatefulWidget {
-  const GuideAllScreen({Key? key}) : super(key: key);
+  const GuideAllScreen({super.key});
 
   @override
   State<GuideAllScreen> createState() => _GuideAllScreenState();
@@ -22,6 +22,8 @@ class _GuideAllScreenState extends State<GuideAllScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -29,7 +31,8 @@ class _GuideAllScreenState extends State<GuideAllScreen> {
           Container(
             height: 37,
             width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.only(top: 15, bottom: 10, left: 20, right: 15),
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(top: 15, bottom: 10),
             child: ToggleButtons(
               fillColor: Colors.transparent,
               splashColor: Colors.transparent,
@@ -47,10 +50,10 @@ class _GuideAllScreenState extends State<GuideAllScreen> {
               controller: _pageController,
               onPageChanged: _onPageChanged,
               children: [
-                All1(),
-                All2(),
-                All3(),
-                All4(),
+                GuideAllCatergory(),
+                GuideRainbowBridget(),
+                GuideHealth(),
+                GuideDiet(),
               ],
             ),
           ),

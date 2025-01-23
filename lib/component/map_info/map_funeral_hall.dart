@@ -6,7 +6,7 @@ class WebViewFuneralHall extends StatelessWidget {
     ..loadRequest(Uri.parse('https://eanimal.kr/map'))
     ..setJavaScriptMode(JavaScriptMode.unrestricted);
 
-  WebViewFuneralHall({Key? key}) : super(key: key);
+  WebViewFuneralHall({super.key});
 
   @override
   Widget build(BuildContext context) {

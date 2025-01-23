@@ -1,4 +1,4 @@
-import 'package:login_with_pet/const/colors.dart';
+import 'package:login_withpet/const/colors.dart';
 import 'package:flutter/material.dart';
 
 class TodayBanner extends StatelessWidget {
@@ -8,8 +8,8 @@ class TodayBanner extends StatelessWidget {
   const TodayBanner({
     required this.selectedDate,
     required this.count,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

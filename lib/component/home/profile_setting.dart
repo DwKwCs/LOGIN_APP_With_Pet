@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:login_with_pet/const/colors.dart';
-import 'package:login_with_pet/component/home/profile_form.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:login_withpet/const/colors.dart';
+import 'package:login_withpet/component/home/profile_form.dart';
+import 'package:login_withpet/database/db_helper.dart';
+import 'dart:typed_data';
 
 class ProfileSetting extends StatefulWidget {
   final XFile? imgFile;
@@ -23,8 +24,8 @@ class ProfileSetting extends StatefulWidget {
     required this.species,
     required this.date,
     required this.ddate,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ProfileSetting> createState() => _ProfileSettingState();
@@ -32,9 +33,8 @@ class ProfileSetting extends StatefulWidget {
 
 class _ProfileSettingState extends State<ProfileSetting> {
   final formKey = GlobalKey<FormState>();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  late XFile? _imgFile;
+  File? _imgFile;
   late bool _isChecked;
   late String _name;
   late String _comment;
@@ -42,36 +42,19 @@ class _ProfileSettingState extends State<ProfileSetting> {
   late String _date;
   late String _ddate;
 
-  bool isNull(String? str) => str == null || str.isEmpty;
-
   Future<void> _pickImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _imgFile = image;
+        _imgFile = File(image.path); // Convert XFile to File
       });
     }
-  }
-
-  Future<void> addPetProfile(String name, String species, String comment, String birth, String dday) async {
-    await _firestore.collection('PetProfiles').add({
-      'name': name,
-      'species' : species,
-      'comment' : comment,
-      'birth' : birth,
-      'dday' : dday,
-      'timestamp': FieldValue.serverTimestamp(),
-    });
-  }
-
-  Stream<QuerySnapshot> getData() {
-    return _firestore.collection('PetProfiles').orderBy('timestamp').snapshots();
   }
 
   @override
   void initState() {
     super.initState();
-    _imgFile = widget.imgFile;
+    _imgFile = widget.imgFile != null ? File(widget.imgFile!.path) : null;
     _isChecked = widget.isChecked;
     _name = widget.name;
     _comment = widget.comment;
@@ -101,17 +84,25 @@ class _ProfileSettingState extends State<ProfileSetting> {
             child: Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: color ?? Colors.black),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: color ?? Colors.black,
+              ),
             ),
           ),
           TextButton(
             onPressed: onTap,
             style: ButtonStyle(
-              overlayColor: MaterialStateProperty.all(Colors.transparent),
+              overlayColor: WidgetStateProperty.all(Colors.transparent),
             ),
             child: Text(
-              isNull(value) ? hint : value,
-              style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w400),
+              value.isEmpty ? hint : value,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ],
@@ -132,21 +123,39 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.close),
               ),
-              title: const Text('반려동물 프로필 수정', style: TextStyle(fontWeight: FontWeight.w700)),
+              title: const Text(
+                '반려동물 프로필 수정',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
               centerTitle: true,
               actions: [
                 IconButton(
-                  onPressed: () {
-                    addPetProfile(_name, _species, _comment, _date, _ddate);
-                    Navigator.of(context).pop({
-                      'imgFile': _imgFile,
-                      'isChecked': _isChecked,
-                      'name': _name,
-                      'comment': _comment,
-                      'species': _species,
-                      'date': _date,
-                      'ddate': _ddate,
-                    });
+                  onPressed: () async {
+                    Uint8List? imageBytes;
+
+                    if (_imgFile != null) {
+                      imageBytes = await _imgFile!.readAsBytes();
+                    } else {
+                      imageBytes = null; // 또는 적절한 기본값
+                    }
+
+                    final Map<String, dynamic> updatedProfile = {
+                      'Img': imageBytes, // 이미지 BLOB
+                      'IsChecked': _isChecked ? 1 : 0,
+                      'Name': _name, // 이름
+                      'Comment': _comment, // 한마디
+                      'Species': _species, // 품종
+                      'Data': _date, // 생일
+                      'Ddate': _ddate, // 기일
+                    };
+
+                    // Profile 테이블 업데이트 또는 삽입
+                    final db = DatabaseHelper();
+                    await db.updateProfile(1, updatedProfile);
+
+                    // UI 갱신
+                    setState(() {});
+                    Navigator.of(context).pop();
                   },
                   icon: const Icon(Icons.check),
                 ),
@@ -155,12 +164,29 @@ class _ProfileSettingState extends State<ProfileSetting> {
             const SizedBox(height: 40),
             GestureDetector(
               onTap: _pickImage,
-              child: CircleAvatar(
-                radius: 70,
-                backgroundColor: Colors.white,
-                child: _imgFile != null
-                    ? Image.file(File(_imgFile!.path), fit: BoxFit.cover)
-                    : Image.asset('asset/img/basic_profile_img.jpg', fit: BoxFit.cover),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 70,
+                    backgroundColor: Colors.white,
+                    backgroundImage: _imgFile != null
+                        ? FileImage(_imgFile!)
+                        : const AssetImage('asset/img/basic_profile_img.jpg')
+                    as ImageProvider,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black45,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 10),
@@ -172,9 +198,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     hint: 'ex)고영희',
                     value: _name,
                     onTap: () async {
-                      _name = await Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ProfileForm(label: '이름', hint: 'ex)고영희', text: _name)),
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileForm(label: '이름', hint: 'ex)고영희', text: _name),
+                        ),
                       );
+                      if (result != null) _name = result;
                       setState(() {});
                     },
                   ),
@@ -183,9 +213,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     hint: 'ex)렉돌',
                     value: _species,
                     onTap: () async {
-                      _species = await Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ProfileForm(label: '품종', hint: 'ex)렉돌', text: _species)),
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileForm(label: '품종', hint: 'ex)렉돌', text: _species),
+                        ),
                       );
+                      if (result != null) _species = result;
                       setState(() {});
                     },
                   ),
@@ -194,9 +228,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     hint: 'ex)귀여운 고양이',
                     value: _comment,
                     onTap: () async {
-                      _comment = await Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ProfileForm(label: '한마디', hint: 'ex)귀여운 고양이', text: _comment)),
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileForm(label: '한마디', hint: 'ex)귀여운 고양이', text: _comment),
+                        ),
                       );
+                      if (result != null) _comment = result;
                       setState(() {});
                     },
                   ),
@@ -205,9 +243,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                     hint: 'ex)YYYY.MM.DD',
                     value: _date,
                     onTap: () async {
-                      _date = await Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ProfileForm(label: '생일', hint: 'ex)YYYY.MM.DD', text: _date)),
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileForm(label: '생일', hint: 'ex)YYYY.MM.DD', text: _date),
+                        ),
                       );
+                      if (result != null) _date = result;
                       setState(() {});
                     },
                   ),
@@ -234,9 +276,13 @@ class _ProfileSettingState extends State<ProfileSetting> {
                           child: GestureDetector(
                             onTap: () async {
                               if (_isChecked) {
-                                _ddate = await Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) => ProfileForm(label: '기일', hint: 'ex)YYYY.MM.DD', text: _ddate)),
+                                final result = await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProfileForm(label: '기일', hint: 'ex)YYYY.MM.DD', text: _ddate),
+                                  ),
                                 );
+                                if (result != null) _ddate = result;
                                 setState(() {});
                               }
                             },
@@ -244,8 +290,10 @@ class _ProfileSettingState extends State<ProfileSetting> {
                               child: TextFormField(
                                 enabled: _isChecked,
                                 decoration: InputDecoration(
-                                  hintText: isNull(_ddate) ? 'ex)YYYY.MM.DD' : _ddate,
-                                  hintStyle: TextStyle(color: _isChecked ? Colors.black : Colors.grey),
+                                  hintText: _ddate.isEmpty ? 'ex)YYYY.MM.DD' : _ddate,
+                                  hintStyle: TextStyle(
+                                    color: _isChecked ? Colors.black : Colors.transparent,
+                                  ),
                                   border: InputBorder.none,
                                 ),
                               ),
@@ -253,7 +301,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                           ),
                         ),
                         CupertinoSwitch(
-                          activeColor: PRIMARY_COLOR,
+                          activeTrackColor: PRIMARY_COLOR,
                           value: _isChecked,
                           onChanged: (bool value) {
                             setState(() {

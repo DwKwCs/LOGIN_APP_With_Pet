@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProfileForm extends StatefulWidget {
   final String label;
@@ -9,8 +10,8 @@ class ProfileForm extends StatefulWidget {
     required this.label,
     required this.hint,
     this.text,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<ProfileForm> createState() => _ProfileFormState();
@@ -21,13 +22,11 @@ class _ProfileFormState extends State<ProfileForm> {
   final TextEditingController _controller = TextEditingController();
 
   late String _text;
-  late bool isEmpty = true;
 
   @override
   void initState() {
     super.initState();
-    if(widget.text == null) {_controller.text = '';}
-    else {_controller.text = widget.text ?? '';}
+    _controller.text = widget.text ?? '';
     _text = widget.text ?? '';
   }
 
@@ -37,10 +36,25 @@ class _ProfileFormState extends State<ProfileForm> {
     super.dispose();
   }
 
+  Future<void> _pickDate() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (pickedDate != null) {
+      final formattedDate = DateFormat('yyyy.MM.dd').format(pickedDate);
+      setState(() {
+        _controller.text = formattedDate;
+        _text = formattedDate;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if(_text != null) {isEmpty = false;}
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -67,6 +81,12 @@ class _ProfileFormState extends State<ProfileForm> {
                 key: _formKey,
                 child: TextFormField(
                   controller: _controller,
+                  readOnly: widget.label == '생일', // Make it read-only for '생일'
+                  onTap: widget.label == '생일'
+                      ? () async {
+                    await _pickDate(); // Trigger date picker
+                  }
+                      : null,
                   onSaved: (value) {
                     setState(() {
                       _text = value ?? '';

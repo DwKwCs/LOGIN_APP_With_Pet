@@ -1,4 +1,4 @@
-import 'package:login_with_pet/const/colors.dart';
+import 'package:login_withpet/const/colors.dart';
 import 'package:flutter/material.dart';
 
 class ScheduleCard extends StatelessWidget {
@@ -6,8 +6,8 @@ class ScheduleCard extends StatelessWidget {
 
   const ScheduleCard({
     required this.content,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,7 @@ class _Content extends StatelessWidget {
 
   const _Content({
     required this.content,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

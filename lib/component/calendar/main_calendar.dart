@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:login_with_pet/const/colors.dart';
+import 'package:login_withpet/const/colors.dart';
 
 class MainCalendar extends StatelessWidget {
   final OnDaySelected onDaySelected;
   final DateTime selectedDate;
 
-  MainCalendar({
+  const MainCalendar({super.key, 
     required this.onDaySelected,
     required this.selectedDate,
   });
