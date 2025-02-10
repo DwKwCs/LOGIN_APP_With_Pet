@@ -49,7 +49,6 @@ class _DailyMemoState extends State<DailyMemo> {
               ],
             ),
 
-            // 🛠️ 여기에 `buildScreen` 호출
             Expanded(child: buildScreen(widget.title)),
           ],
         ),

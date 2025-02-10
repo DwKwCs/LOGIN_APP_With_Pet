@@ -95,6 +95,18 @@ class _DailyCheckListState extends State<DailyCheckList> {
     return FutureBuilder<Map<String, dynamic>?>(
       future: diaryFuture,
       builder: (context, snapshot) {
+        final Map<String, dynamic> diary = {
+          'Date': widget.selectedDate.toString(),
+          'Walk': 0,
+          'Health': 0,
+          'Medicine': 0,
+          'Sleep': 0,
+          'Symptom': '',
+          'Memo_title': '',
+          'Memo_content': '',
+          ...(snapshot.data ?? {}), // 기존 데이터가 있으면 덮어쓰기
+        };
+
         return Container(
           padding: const EdgeInsets.all(10),
           child: ListView(
@@ -112,7 +124,9 @@ class _DailyCheckListState extends State<DailyCheckList> {
               const SizedBox(height: 5),
               ...checkItems.map((item) => buildCheckTile(item)).toList(),
               const Divider(color: Color(0xfff9f6f3), thickness: 1.5),
-              ...navigationItems.map((item) => buildNavigationTile(item)).toList(),
+              buildNavigationSleepTile(diary),
+              buildNavigationSymptomTile(diary),
+              buildNavigationMemoTile(diary),
               const SizedBox(height: 5),
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -127,12 +141,6 @@ class _DailyCheckListState extends State<DailyCheckList> {
       },
     );
   }
-
-  /*
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        */
 
   Widget buildCheckTile(Map<String, dynamic> item) {
     int index = item['index'];
@@ -157,20 +165,27 @@ class _DailyCheckListState extends State<DailyCheckList> {
     );
   }
 
-  Widget buildNavigationTile(Map<String, dynamic>? item) {
+  Widget buildNavigationSleepTile(Map<String, dynamic>? item) {
     return ListTile(
-      shape: Border(bottom: BorderSide(color: Color(0xfff9f6f3), width: 1.5)),
-      leading: Icon(Icons.circle, size: 17, color: item?['color']),
-      title: Text(item?['title']),
-      subtitle: item?['title'] == '수면 중 호흡수'
-          ? Text(
-            '${item?['Sleep'] ?? 0}회',
-            textAlign: TextAlign.right,
-            style: TextStyle(
-                color: Colors.grey,
-                fontSize: 12,
-                fontWeight: FontWeight.w400)) :
-          null,
+      shape: const Border(bottom: BorderSide(color: Color(0xfff9f6f3), width: 1.5)),
+      leading: Icon(
+        Icons.circle,
+        size: 17,
+        color: const Color(0xFFFEA539),
+      ),
+      title: Text(
+        '수면 중 호흡수',
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        '${item?['Sleep'] ?? 0}회',
+        textAlign: TextAlign.right,
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right_rounded),
         onPressed: () {
@@ -178,7 +193,72 @@ class _DailyCheckListState extends State<DailyCheckList> {
             MaterialPageRoute(
               builder: (context) => DailyMemo(
                 selectedDate: widget.selectedDate,
-                title: item?['title'],
+                title: (item != null && item.containsKey('title')) ? item['title'] : '수면 중 호흡수',
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildNavigationSymptomTile(Map<String, dynamic>? item) {
+    return ListTile(
+      shape: const Border(bottom: BorderSide(color: Color(0xfff9f6f3), width: 1.5)),
+      leading: Icon(
+        Icons.circle,
+        size: 17,
+        color: const Color(0xFFED6D09),
+      ),
+      title: Text(
+        '증상',
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.chevron_right_rounded),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DailyMemo(
+                selectedDate: widget.selectedDate,
+                title: '증상',
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildNavigationMemoTile(Map<String, dynamic>? item) {
+    return ListTile(
+      shape: const Border(bottom: BorderSide(color: Color(0xfff9f6f3), width: 1.5)),
+      leading: Icon(
+        Icons.circle,
+        size: 17,
+        color: const Color(0xFFED6D09),
+      ),
+      title: Text(
+        '일기',
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        '${item?['Memo_title'] ?? ''}',
+        textAlign: TextAlign.right,
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.chevron_right_rounded),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => DailyMemo(
+                selectedDate: widget.selectedDate,
+                title: '일기',
               ),
             ),
           );
