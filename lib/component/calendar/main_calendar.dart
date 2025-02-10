@@ -3,16 +3,10 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:login_withpet/const/colors.dart';
 import 'package:login_withpet/component/calendar/daily_check_list.dart';
 import 'package:intl/intl.dart';
+import 'package:login_withpet/database/db_helper.dart';
 
 class MainCalendar extends StatefulWidget {
-  final OnDaySelected onDaySelected;
-  final DateTime selectedDate;
-
-  const MainCalendar({
-    super.key,
-    required this.onDaySelected,
-    required this.selectedDate,
-  });
+  const MainCalendar({super.key});
 
   @override
   State<MainCalendar> createState() => _MainCalendarState();
@@ -24,7 +18,7 @@ class _MainCalendarState extends State<MainCalendar> {
   @override
   void initState() {
     super.initState();
-    _selectedDate = widget.selectedDate;
+    _selectedDate = DateTime.now();
   }
 
   bool isWeekend(DateTime day) {
@@ -39,7 +33,17 @@ class _MainCalendarState extends State<MainCalendar> {
     setState(() {
       _selectedDate = selectedDate;
     });
-    widget.onDaySelected(selectedDate, focusedDate);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return DailyCheckList(selectedDate: _selectedDate);
+      },
+    );
   }
 
   @override
@@ -88,18 +92,6 @@ class _MainCalendarState extends State<MainCalendar> {
               color: Color(0xfff8e9d9),
             ),
           ),
-        ),
-        const SizedBox(height: 25),
-        Container(
-          alignment: Alignment.topLeft,
-          padding: const EdgeInsets.only(left: 18),
-          child: Text(
-            formattedDate,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-        ),
-        Expanded(
-          child: DailyCheckList(selectedDate: _selectedDate),
         ),
       ],
     );

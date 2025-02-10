@@ -7,8 +7,8 @@ class DailyCheckList extends StatefulWidget {
   final DateTime selectedDate;
 
   const DailyCheckList({
-    required this.selectedDate,
     super.key,
+    required this.selectedDate,
   });
 
   @override
@@ -16,13 +16,15 @@ class DailyCheckList extends StatefulWidget {
 }
 
 class _DailyCheckListState extends State<DailyCheckList> {
+  List<bool> check = [false, false, false];
+
   final DatabaseHelper dbHelper = DatabaseHelper();
-  Future<Map<String, dynamic>?>? diaryFuture;
+  late Future<Map<String, dynamic>?> diaryFuture;
 
   final List<Map<String, dynamic>> checkItems = [
-    {'title': '산책', 'color': Color(0xFFFFDFA9), 'key': 'Walk'},
-    {'title': '배변', 'color': Color(0xFFFFDFA9), 'key': 'Health'},
-    {'title': '약', 'color': Color(0xFFFFDFA9), 'key': 'Medicine'},
+    {'title': '산책', 'color': Color(0xFFFFDFA9), 'index': 0, 'key': 'Walk'},
+    {'title': '배변', 'color': Color(0xFFFFDFA9), 'index': 1, 'key': 'Health'},
+    {'title': '약', 'color': Color(0xFFFFDFA9), 'index': 2, 'key': 'Medicine'},
   ];
 
   final List<Map<String, dynamic>> navigationItems = [
@@ -37,11 +39,23 @@ class _DailyCheckListState extends State<DailyCheckList> {
     fetchDiary();
   }
 
+  String get formattedDate {
+    return DateFormat('M월 d일 EEEE', 'ko_KR').format(widget.selectedDate);
+  }
+
   Future<void> fetchDiary() async {
     String formattedDate = DateFormat('yyyy.MM.dd').format(widget.selectedDate);
-    setState(() {
-      diaryFuture = dbHelper.getDiaryByDate(formattedDate);
-    });
+    diaryFuture = dbHelper.getDiaryByDate(formattedDate);
+
+    final diary = await diaryFuture;
+
+    if (diary != null) {
+      setState(() {
+        check[0] = (diary['Walk'] ?? 0) == 1;
+        check[1] = (diary['Health'] ?? 0) == 1;
+        check[2] = (diary['Medicine'] ?? 0) == 1;
+      });
+    }
   }
 
   Future<void> saveDiary(String date, String key, int value) async {
@@ -53,6 +67,7 @@ class _DailyCheckListState extends State<DailyCheckList> {
     );
 
     if (existing.isEmpty) {
+      // 날짜가 없으면 새로 삽입
       await db.insert('Diary', {
         'Date': date,
         'Walk': 0,
@@ -62,9 +77,10 @@ class _DailyCheckListState extends State<DailyCheckList> {
         'Symptom': '',
         'Memo_title': '',
         'Memo_content': '',
-        key: value,
+        key: value, // 전달된 키와 값을 반영
       });
     } else {
+      // 날짜가 있으면 업데이트
       await db.update(
         'Diary',
         {key: value},
@@ -72,7 +88,6 @@ class _DailyCheckListState extends State<DailyCheckList> {
         whereArgs: [date],
       );
     }
-    fetchDiary();
   }
 
   @override
@@ -80,19 +95,32 @@ class _DailyCheckListState extends State<DailyCheckList> {
     return FutureBuilder<Map<String, dynamic>?>(
       future: diaryFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting || snapshot.data == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final diary = snapshot.data ?? {};
-
         return Container(
-          padding: EdgeInsets.all(10),
+          padding: const EdgeInsets.all(10),
           child: ListView(
             shrinkWrap: true,
             children: [
-              ...checkItems.map((item) => buildCheckTile(item, diary)).toList(),
+              const SizedBox(height: 16),
+              Container(
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.only(left: 18),
+                child: Text(
+                  formattedDate,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+              ),
+              const SizedBox(height: 5),
+              ...checkItems.map((item) => buildCheckTile(item)).toList(),
+              const Divider(color: Color(0xfff9f6f3), thickness: 1.5),
               ...navigationItems.map((item) => buildNavigationTile(item)).toList(),
+              const SizedBox(height: 5),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  '저장',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
+                ),
+              ),
             ],
           ),
         );
@@ -100,9 +128,15 @@ class _DailyCheckListState extends State<DailyCheckList> {
     );
   }
 
-  Widget buildCheckTile(Map<String, dynamic> item, Map<String, dynamic> diary) {
+  /*
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        */
+
+  Widget buildCheckTile(Map<String, dynamic> item) {
+    int index = item['index'];
     String key = item['key'];
-    bool isChecked = (diary[key] ?? 0) == 1;
 
     return ListTile(
       leading: Icon(Icons.circle, size: 17, color: item['color']),
@@ -110,24 +144,33 @@ class _DailyCheckListState extends State<DailyCheckList> {
       trailing: Checkbox(
         checkColor: Colors.white,
         activeColor: Color(0xFFFFC873),
-        value: isChecked,
+        value: check[index],
         onChanged: (bool? value) async {
-          if (value == null) return;
-          String formattedDate = DateFormat('yyyy.MM.dd').format(widget.selectedDate);
-          await saveDiary(formattedDate, key, value ? 1 : 0);
+          setState(() {
+            check[index] = value ?? false;
+          });
 
-          if (mounted) {
-            setState(() {});
-          }
+          String formattedDate = DateFormat('yyyy.MM.dd').format(widget.selectedDate);
+          await saveDiary(formattedDate, key, value! ? 1 : 0);
         },
       ),
     );
   }
 
-  Widget buildNavigationTile(Map<String, dynamic> item) {
+  Widget buildNavigationTile(Map<String, dynamic>? item) {
     return ListTile(
-      leading: Icon(Icons.circle, size: 17, color: item['color']),
-      title: Text(item['title']),
+      shape: Border(bottom: BorderSide(color: Color(0xfff9f6f3), width: 1.5)),
+      leading: Icon(Icons.circle, size: 17, color: item?['color']),
+      title: Text(item?['title']),
+      subtitle: item?['title'] == '수면 중 호흡수'
+          ? Text(
+            '${item?['Sleep'] ?? 0}회',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+                fontWeight: FontWeight.w400)) :
+          null,
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right_rounded),
         onPressed: () {
@@ -135,10 +178,10 @@ class _DailyCheckListState extends State<DailyCheckList> {
             MaterialPageRoute(
               builder: (context) => DailyMemo(
                 selectedDate: widget.selectedDate,
-                title: item['title'],
+                title: item?['title'],
               ),
             ),
-          ).then((_) => fetchDiary());
+          );
         },
       ),
     );
