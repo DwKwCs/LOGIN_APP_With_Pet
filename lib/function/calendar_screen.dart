@@ -15,26 +15,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
     DateTime.now().day,
   );
 
+  void onDaySelected(DateTime selectedDate, DateTime focusedDate) {
+    setState(() {
+      this.selectedDate = selectedDate;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            MainCalendar(
-              selectedDate: selectedDate,
-              onDaySelected: onDaySelected,
-            ),
-          ],
+        child: MainCalendar(
+          selectedDate: selectedDate,
+          onDaySelected: onDaySelected,
         ),
       ),
     );
-  }
-
-  void onDaySelected(DateTime selectedDate, DateTime focusedDate) {
-    setState(() {
-      this.selectedDate = selectedDate;
-    });
   }
 }

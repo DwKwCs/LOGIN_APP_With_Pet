@@ -25,6 +25,20 @@ class DatabaseHelper {
       path,
       version: 1,
       onCreate: (db, version) async {
+        // Diary 테이블 생성
+        await db.execute('''
+          CREATE TABLE Diary (
+            Date TEXT PRIMARY KEY,
+            Walk INTEGER,
+            Health INTEGER,
+            Medicine INTEGER,
+            Sleep INTEGER,
+            Symptom TEXT,
+            Memo_title TEXT,
+            Memo_content TEXT
+          )
+        ''');
+
         // Profile 테이블 생성
         await db.execute('''
           CREATE TABLE Profile (
@@ -66,8 +80,55 @@ class DatabaseHelper {
   }
 
   // -----------------------------------------------
+  // Diary 테이블: 삽입, 업데이트, 조회, 삭제 함수
+  // -----------------------------------------------
+
+  Future<int> insertDiary(Map<String, dynamic> diary) async {
+    final db = await database;
+    return await db.insert('Diary', diary);
+  }
+
+  Future<int> updateDiary(String date, Map<String, dynamic> diary) async {
+    final db = await database;
+    return await db.update(
+      'Diary',
+      diary,
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+  }
+
+  Future<int> deleteDiary(String date) async {
+    final db = await database;
+    return await db.delete(
+      'Diary',
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+  }
+
+  /*
+  Future<List<Map<String, dynamic>>> getAllDiary() async {
+    final db = await database;
+    return await db.query('Diary'); // Diary 테이블의 모든 데이터 조회
+  }
+  */
+
+  Future<Map<String, dynamic>?> getDiaryByDate(String date) async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'Diary',
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+
+    return result.isNotEmpty ? result.first : null; // 데이터 없으면 null 반환
+  }
+
+  // -----------------------------------------------
   // Profile 테이블: 삽입, 업데이트, 조회 함수
   // -----------------------------------------------
+
   Future<int> insertProfile(Map<String, dynamic> profile) async {
     final db = await database;
     return await db.insert('Profile', profile);
@@ -91,6 +152,7 @@ class DatabaseHelper {
   // -----------------------------------------------
   // Guides 테이블: 삽입, 업데이트, 삭제 함수
   // -----------------------------------------------
+
   Future<int> insertGuide(Map<String, dynamic> guide) async {
     final db = await database;
     return await db.insert('Guides', guide);
@@ -150,6 +212,7 @@ class DatabaseHelper {
   // -----------------------------------------------
   // Contents 테이블: 삽입, 업데이트, 삭제 함수
   // -----------------------------------------------
+
   Future<int> insertContent(Map<String, dynamic> content) async {
     final db = await database;
     return await db.insert('Contents', content);

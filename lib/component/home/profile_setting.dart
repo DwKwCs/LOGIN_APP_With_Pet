@@ -8,24 +8,7 @@ import 'package:login_withpet/database/db_helper.dart';
 import 'dart:typed_data';
 
 class ProfileSetting extends StatefulWidget {
-  final XFile? imgFile;
-  final bool isChecked;
-  final String name;
-  final String comment;
-  final String species;
-  final String date;
-  final String ddate;
-
-  const ProfileSetting({
-    required this.imgFile,
-    required this.isChecked,
-    required this.name,
-    required this.comment,
-    required this.species,
-    required this.date,
-    required this.ddate,
-    super.key,
-  });
+  const ProfileSetting({super.key});
 
   @override
   State<ProfileSetting> createState() => _ProfileSettingState();
@@ -34,33 +17,49 @@ class ProfileSetting extends StatefulWidget {
 class _ProfileSettingState extends State<ProfileSetting> {
   final formKey = GlobalKey<FormState>();
 
-  File? _imgFile;
-  late bool _isChecked;
-  late String _name;
-  late String _comment;
-  late String _species;
-  late String _date;
-  late String _ddate;
+  Uint8List? _imgFile;
+  bool isChecked = false;
+  String name = '';
+  String comment = '';
+  String species = '';
+  String date = '';
+  String ddate = '';
 
   Future<void> _pickImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() {
-        _imgFile = File(image.path); // Convert XFile to File
+        _imgFile = File(image.path).readAsBytesSync();
       });
+    }
+  }
+
+  Future<void> fetchAllProfiles() async {
+    final profiles = await DatabaseHelper().getAllProfiles();
+
+    if (profiles.isNotEmpty) {
+      final profile = profiles.first;
+
+      if (mounted) {
+        setState(() {
+          _imgFile = profile['Img'];
+          isChecked = (profile['IsChecked'] ?? 0) == 1;
+          name = profile['Name'] ?? '';
+          comment = profile['Comment'] ?? '';
+          species = profile['Species'] ?? '';
+          date = profile['Data'] ?? '';
+          ddate = profile['Ddate'] ?? '';
+        });
+      }
+    } else {
+      print('No profiles found.');
     }
   }
 
   @override
   void initState() {
     super.initState();
-    _imgFile = widget.imgFile != null ? File(widget.imgFile!.path) : null;
-    _isChecked = widget.isChecked;
-    _name = widget.name;
-    _comment = widget.comment;
-    _species = widget.species;
-    _date = widget.date;
-    _ddate = widget.ddate;
+    fetchAllProfiles();
   }
 
   Widget buildProfileField({
@@ -131,25 +130,16 @@ class _ProfileSettingState extends State<ProfileSetting> {
               actions: [
                 IconButton(
                   onPressed: () async {
-                    Uint8List? imageBytes;
-
-                    if (_imgFile != null) {
-                      imageBytes = await _imgFile!.readAsBytes();
-                    } else {
-                      imageBytes = null; // 또는 적절한 기본값
-                    }
-
                     final Map<String, dynamic> updatedProfile = {
-                      'Img': imageBytes, // 이미지 BLOB
-                      'IsChecked': _isChecked ? 1 : 0,
-                      'Name': _name, // 이름
-                      'Comment': _comment, // 한마디
-                      'Species': _species, // 품종
-                      'Data': _date, // 생일
-                      'Ddate': _ddate, // 기일
+                      'Img': _imgFile, // 이미지 BLOB
+                      'IsChecked': isChecked ? 1 : 0,
+                      'Name': name, // 이름
+                      'Comment': comment, // 한마디
+                      'Species': species, // 품종
+                      'Data': date, // 생일
+                      'Ddate': ddate, // 기일
                     };
 
-                    // Profile 테이블 업데이트 또는 삽입
                     final db = DatabaseHelper();
                     await db.updateProfile(1, updatedProfile);
 
@@ -170,10 +160,21 @@ class _ProfileSettingState extends State<ProfileSetting> {
                   CircleAvatar(
                     radius: 70,
                     backgroundColor: Colors.white,
-                    backgroundImage: _imgFile != null
-                        ? FileImage(_imgFile!)
-                        : const AssetImage('asset/img/basic_profile_img.jpg')
-                    as ImageProvider,
+                    child: ClipOval(
+                      child: _imgFile != null
+                          ? Image.memory(
+                        _imgFile!,
+                        fit: BoxFit.cover,
+                        width: 140,
+                        height: 140,
+                      )
+                          : const Image(
+                        image: AssetImage('asset/img/basic_profile_img.jpg'),
+                        fit: BoxFit.cover,
+                        width: 140,
+                        height: 140,
+                      ),
+                    ),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -196,60 +197,60 @@ class _ProfileSettingState extends State<ProfileSetting> {
                   buildProfileField(
                     label: '이   름',
                     hint: 'ex)고영희',
-                    value: _name,
+                    value: name,
                     onTap: () async {
                       final result = await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              ProfileForm(label: '이름', hint: 'ex)고영희', text: _name),
+                              ProfileForm(label: '이름', hint: 'ex)고영희', text: name),
                         ),
                       );
-                      if (result != null) _name = result;
-                      setState(() {});
-                    },
-                  ),
-                  buildProfileField(
-                    label: '품   종',
-                    hint: 'ex)렉돌',
-                    value: _species,
-                    onTap: () async {
-                      final result = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ProfileForm(label: '품종', hint: 'ex)렉돌', text: _species),
-                        ),
-                      );
-                      if (result != null) _species = result;
+                      if (result != null) name = result;
                       setState(() {});
                     },
                   ),
                   buildProfileField(
                     label: '한마디',
                     hint: 'ex)귀여운 고양이',
-                    value: _comment,
+                    value: comment,
                     onTap: () async {
                       final result = await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              ProfileForm(label: '한마디', hint: 'ex)귀여운 고양이', text: _comment),
+                              ProfileForm(label: '한마디', hint: 'ex)귀여운 고양이', text: comment),
                         ),
                       );
-                      if (result != null) _comment = result;
+                      if (result != null) comment = result;
+                      setState(() {});
+                    },
+                  ),
+                  buildProfileField(
+                    label: '품   종',
+                    hint: 'ex)렉돌',
+                    value: species,
+                    onTap: () async {
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ProfileForm(label: '품종', hint: 'ex)렉돌', text: species),
+                        ),
+                      );
+                      if (result != null) species = result;
                       setState(() {});
                     },
                   ),
                   buildProfileField(
                     label: '생   일',
                     hint: 'ex)YYYY.MM.DD',
-                    value: _date,
+                    value: date,
                     onTap: () async {
                       final result = await Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
-                              ProfileForm(label: '생일', hint: 'ex)YYYY.MM.DD', text: _date),
+                              ProfileForm(label: '생일', hint: 'ex)YYYY.MM.DD', text: date),
                         ),
                       );
-                      if (result != null) _date = result;
+                      if (result != null) date = result;
                       setState(() {});
                     },
                   ),
@@ -268,31 +269,31 @@ class _ProfileSettingState extends State<ProfileSetting> {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            color: _isChecked ? Colors.black : Colors.grey[300],
+                            color: isChecked ? Colors.black : Colors.grey[300],
                           ),
                         ),
                         const SizedBox(width: 24),
                         Expanded(
                           child: GestureDetector(
                             onTap: () async {
-                              if (_isChecked) {
+                              if (isChecked) {
                                 final result = await Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ProfileForm(label: '기일', hint: 'ex)YYYY.MM.DD', text: _ddate),
+                                        ProfileForm(label: '기일', hint: 'ex)YYYY.MM.DD', text: ddate),
                                   ),
                                 );
-                                if (result != null) _ddate = result;
+                                if (result != null) ddate = result;
                                 setState(() {});
                               }
                             },
                             child: AbsorbPointer(
                               child: TextFormField(
-                                enabled: _isChecked,
+                                enabled: isChecked,
                                 decoration: InputDecoration(
-                                  hintText: _ddate.isEmpty ? 'ex)YYYY.MM.DD' : _ddate,
+                                  hintText: ddate.isEmpty ? 'ex)YYYY.MM.DD' : ddate,
                                   hintStyle: TextStyle(
-                                    color: _isChecked ? Colors.black : Colors.transparent,
+                                    color: isChecked ? Colors.black : Colors.transparent,
                                   ),
                                   border: InputBorder.none,
                                 ),
@@ -302,10 +303,10 @@ class _ProfileSettingState extends State<ProfileSetting> {
                         ),
                         CupertinoSwitch(
                           activeTrackColor: PRIMARY_COLOR,
-                          value: _isChecked,
+                          value: isChecked,
                           onChanged: (bool value) {
                             setState(() {
-                              _isChecked = value;
+                              isChecked = value;
                             });
                           },
                         ),

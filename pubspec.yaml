@@ -53,6 +53,7 @@ dependencies:
   web: ^1.1.0
   sqflite: ^2.4.1
   drift: ^2.23.1
+  flutter_neat_and_clean_calendar: ^0.4.16
 
 dev_dependencies:
   flutter_test:

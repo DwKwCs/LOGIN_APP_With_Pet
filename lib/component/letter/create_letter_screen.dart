@@ -7,10 +7,19 @@ class CreateLetterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context),
+      appBar: buildAppBar(context, currentScreen: 'write'),
       backgroundColor: Colors.white,
-      body: const SafeArea(
-        child: Text("편지 작성 화면")
+      body: SafeArea(
+        child: TextFormField(
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.all(16.0)
+          ),
+          autofocus: true,
+          maxLength: 500,
+          minLines: 10,
+          maxLines: null,
+        ),
       ),
     );
   }

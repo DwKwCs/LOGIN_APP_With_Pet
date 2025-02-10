@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:login_withpet/component/home/profile_setting.dart';
 import 'package:login_withpet/component/home/home_setting.dart';
 import 'package:login_withpet/database/db_helper.dart';
@@ -13,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Uint8List? imgBytes; // 이미지 데이터 (BLOB)
+  Uint8List? imgBytes;
   bool isChecked = false;
   String name = '';
   String comment = '';
@@ -21,22 +20,23 @@ class _HomeScreenState extends State<HomeScreen> {
   String date = '';
   String ddate = '';
 
-  // 프로필 데이터를 가져오는 메서드를 initState에서 호출
   Future<void> fetchAllProfiles() async {
     final profiles = await DatabaseHelper().getAllProfiles();
 
     if (profiles.isNotEmpty) {
-      final profile = profiles.first; // 첫 번째 프로필 데이터 가져오기
+      final profile = profiles.first;
 
-      setState(() {
-        imgBytes = profile['Img']; // BLOB 데이터 처리
-        isChecked = (profile['IsChecked'] ?? 0) == 1;
-        name = profile['Name'] ?? '';
-        comment = profile['Comment'] ?? '';
-        species = profile['Species'] ?? '';
-        date = profile['Data'] ?? '';
-        ddate = profile['Ddate'] ?? '';
-      });
+      if (mounted) {
+        setState(() {
+          imgBytes = profile['Img'];
+          isChecked = (profile['IsChecked'] ?? 0) == 1;
+          name = profile['Name'] ?? '';
+          comment = profile['Comment'] ?? '';
+          species = profile['Species'] ?? '';
+          date = profile['Data'] ?? '';
+          ddate = profile['Ddate'] ?? '';
+        });
+      }
     } else {
       print('No profiles found.');
     }
@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    fetchAllProfiles(); // 화면 초기화 시 프로필 데이터 가져오기
+    fetchAllProfiles();
   }
 
   @override
@@ -90,18 +90,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () async {
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => ProfileSetting(
-                          imgFile: imgBytes != null ? XFile.fromData(imgBytes!) : null,
-                          isChecked: isChecked,
-                          name: name,
-                          comment: comment,
-                          species: species,
-                          date: date,
-                          ddate: ddate,
-                        ),
+                        builder: (context) => ProfileSetting(),
                       ),
                     );
-                    fetchAllProfiles();
+                    await fetchAllProfiles();
                   },
                 ),
               ],

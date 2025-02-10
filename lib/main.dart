@@ -32,7 +32,7 @@ Future<void> initializeApp() async {
       'Img': null,
       'IsChecked': 0,
       'Name': '고영희',
-      'Comment': '코멘트',
+      'Comment': '귀여운 고양이',
       'Species': '렉돌',
       'Data': '2024.12.25',
       'Ddate': null,
