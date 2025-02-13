@@ -35,20 +35,29 @@ class _DailyMemoState extends State<DailyMemo> {
               ),
               elevation: 0.0,
               leading: IconButton(
-                onPressed: () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.close),
+                onPressed: () => Navigator.of(context).pop(),
               ),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.check),
                   onPressed: () async {
                     setState(() {});
+                    /*
+                    switch(widget.title) {
+                      case '수면 중 호흡수':
+                        dbHelper.updateDiaryPart()
+                      case '증상':
+                        return;
+                      case '일기':
+                        return;
+                    }
+                    */
                     Navigator.of(context).pop();
                   },
                 )
               ],
             ),
-
             Expanded(child: buildScreen(widget.title)),
           ],
         ),
@@ -58,26 +67,28 @@ class _DailyMemoState extends State<DailyMemo> {
 
   Widget buildScreen(String title) {
     switch (title) {
-      case '수면 중 호흡수':
-        return walk();
       case '증상':
-        return health();
+        return symptom();
       case '일기':
-        return medicine();
+        return memo();
       default:
-        return Container(); // 기본값
+        return Center(
+          child: Text(
+            '텍스트 필드를 불러오는데 실패했습니다.\n다시 시도해주세요.',
+          )
+        );
     }
   }
 
-  Widget walk() {
-    return Center(child: Text('수면 중 호흡수 화면'));
+  Widget symptom() {
+    return Container(
+      child: TextField(
+
+      ),
+    );
   }
 
-  Widget health() {
-    return Center(child: Text('증상 화면'));
-  }
-
-  Widget medicine() {
-    return Center(child: Text('일기 화면'));
+  Widget memo() {
+    return Container(child: Text('일기 화면'));
   }
 }

@@ -32,7 +32,7 @@ class DatabaseHelper {
             Walk INTEGER,
             Health INTEGER,
             Medicine INTEGER,
-            Sleep INTEGER,
+            Sleep TEXT,
             Symptom TEXT,
             Memo_title TEXT,
             Memo_content TEXT
@@ -72,7 +72,7 @@ class DatabaseHelper {
             Content TEXT,
             IsChecked INTEGER,
             PRIMARY KEY (G_code, Number),
-            FOREIGN KEY (G_code) REFERENCES Guides (Code)
+            FOREIGN KEY (G_code) REFERENCES Diary (Code)
           )
         ''');
       },
@@ -98,6 +98,16 @@ class DatabaseHelper {
     );
   }
 
+  Future<int> updateDiaryPart(String date, String key, String value) async {
+    final db = await database;
+    return await db.update(
+      'Diary',
+      {key: value},
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+  }
+
   Future<int> deleteDiary(String date) async {
     final db = await database;
     return await db.delete(
@@ -106,13 +116,6 @@ class DatabaseHelper {
       whereArgs: [date],
     );
   }
-
-  /*
-  Future<List<Map<String, dynamic>>> getAllDiary() async {
-    final db = await database;
-    return await db.query('Diary'); // Diary 테이블의 모든 데이터 조회
-  }
-  */
 
   Future<Map<String, dynamic>?> getDiaryByDate(String date) async {
     final db = await database;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:login_withpet/const/colors.dart';
-import 'package:login_withpet/component/calendar/daily_check_list.dart';
+import 'package:login_withpet/component/calendar/daily_diary.dart';
 import 'package:intl/intl.dart';
 import 'package:login_withpet/database/db_helper.dart';
 
@@ -37,11 +37,12 @@ class _MainCalendarState extends State<MainCalendar> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
+      barrierColor: Colors.black.withOpacity(0.1),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return DailyCheckList(selectedDate: _selectedDate);
+        return DailyDiary(selectedDate: _selectedDate);
       },
     );
   }
