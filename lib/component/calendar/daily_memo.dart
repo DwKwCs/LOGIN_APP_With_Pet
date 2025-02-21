@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:login_withpet/database/db_helper.dart';
 
 class DailyMemo extends StatefulWidget {
   final DateTime selectedDate;
   final String title;
+  final String symptom;
+  final String memoTitle;
+  final String memoContent;
 
   const DailyMemo({
     super.key,
     required this.selectedDate,
     required this.title,
+    this.symptom = '',
+    this.memoTitle = '',
+    this.memoContent = '',
   });
 
   @override
@@ -17,7 +22,27 @@ class DailyMemo extends StatefulWidget {
 }
 
 class _DailyMemoState extends State<DailyMemo> {
-  final DatabaseHelper dbHelper = DatabaseHelper();
+  final _formKey = GlobalKey<FormState>();
+
+  late TextEditingController symptomController;
+  late TextEditingController titleController;
+  late TextEditingController contentController;
+
+  @override
+  void initState() {
+    super.initState();
+    symptomController = TextEditingController(text: widget.symptom);
+    titleController = TextEditingController(text: widget.memoTitle);
+    contentController = TextEditingController(text: widget.memoContent);
+  }
+
+  @override
+  void dispose() {
+    symptomController.dispose();
+    titleController.dispose();
+    contentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +56,7 @@ class _DailyMemoState extends State<DailyMemo> {
               centerTitle: true,
               title: Text(
                 widget.title,
-                style: TextStyle(fontWeight: FontWeight.w800),
+                style: const TextStyle(fontWeight: FontWeight.w800),
               ),
               elevation: 0.0,
               leading: IconButton(
@@ -42,23 +67,26 @@ class _DailyMemoState extends State<DailyMemo> {
                 IconButton(
                   icon: const Icon(Icons.check),
                   onPressed: () async {
-                    setState(() {});
-                    /*
-                    switch(widget.title) {
-                      case '수면 중 호흡수':
-                        dbHelper.updateDiaryPart()
-                      case '증상':
-                        return;
-                      case '일기':
-                        return;
+                    if (_formKey.currentState!.validate()) {
+                      if (widget.title == '증상') {
+                        Navigator.of(context).pop(symptomController.text);
+                      } else if (widget.title == '일기') {
+                        Navigator.of(context).pop({
+                          'title': titleController.text,
+                          'content': contentController.text
+                        });
+                      }
                     }
-                    */
-                    Navigator.of(context).pop();
                   },
                 )
               ],
             ),
-            Expanded(child: buildScreen(widget.title)),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: buildScreen(widget.title),
+              ),
+            ),
           ],
         ),
       ),
@@ -68,27 +96,143 @@ class _DailyMemoState extends State<DailyMemo> {
   Widget buildScreen(String title) {
     switch (title) {
       case '증상':
-        return symptom();
+        return buildSymptomField();
       case '일기':
-        return memo();
+        return buildMemoFields();
       default:
-        return Center(
+        return const Center(
           child: Text(
             '텍스트 필드를 불러오는데 실패했습니다.\n다시 시도해주세요.',
-          )
+            textAlign: TextAlign.center,
+          ),
         );
     }
   }
 
-  Widget symptom() {
-    return Container(
-      child: TextField(
-
-      ),
+  Widget buildSymptomField() {
+    return Form(
+      key: _formKey,
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Align(
+            alignment: Alignment.topCenter,
+            child: TextFormField(
+              keyboardType: TextInputType.multiline,
+              controller: symptomController,
+              maxLines: 5,
+              cursorColor: Colors.grey,
+              decoration: InputDecoration(
+                hintText: '어떤 증상을 보였나요?',
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.grey,
+                    width: 1.0,
+                  ),
+                ),
+                contentPadding: EdgeInsets.all(12),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '내용을 입력해주세요.';
+                }
+                return null;
+              },
+            ),
+          ),
+        ),
+      )
     );
   }
 
-  Widget memo() {
-    return Container(child: Text('일기 화면'));
+  Widget buildMemoFields() {
+    return Form(
+      key: _formKey,
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          body: Column(
+            children: [
+              Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '제목',
+                  style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w700),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                keyboardType: TextInputType.text,
+                controller: titleController,
+                maxLength: 12,
+                decoration: InputDecoration(
+                  labelText: '오늘의 제목은 무엇인가요?',
+                  hintText: '오늘의 제목은 무엇인가요?',
+                  border: InputBorder.none, // 기본 밑줄 제거
+                  enabledBorder: InputBorder.none, // 비활성화 상태에서도 밑줄 제거
+                  focusedBorder: InputBorder.none, // 포커스 상태에서도 밑줄 제거
+                  filled: true,
+                  fillColor: Color(0xFFFFF9ED),
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  contentPadding: EdgeInsets.all(12),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return '제목을 입력하세요.';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '내용',
+                  style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w700),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                keyboardType: TextInputType.multiline,
+                controller: contentController,
+                maxLines: 8,
+                decoration: InputDecoration(
+                  labelText: '기억하고 싶은 내용이 있나요?',
+                  hintText: '기억하고 싶은 내용이 있나요?',
+                  filled: true,
+                  fillColor: Color(0xFFFFF9ED),
+                  enabledBorder: InputBorder.none, // 비활성화 상태에서도 밑줄 제거
+                  focusedBorder: InputBorder.none, // 포커스 상태에서도 밑줄 제거
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(1.0),
+                  ),
+                  contentPadding: EdgeInsets.all(12),
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return '내용을 입력하세요.';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

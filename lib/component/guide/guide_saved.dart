@@ -3,7 +3,9 @@ import 'package:login_withpet/component/guide/guide_card.dart';
 import 'package:login_withpet/database/db_helper.dart';
 
 class SavedGuideScreen extends StatefulWidget {
-  const SavedGuideScreen({super.key});
+  const SavedGuideScreen({
+    super.key,
+  });
 
   @override
   State<SavedGuideScreen> createState() => _SavedGuideScreenState();

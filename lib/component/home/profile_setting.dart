@@ -190,6 +190,12 @@ class _ProfileSettingState extends State<ProfileSetting> {
                 ],
               ),
             ),
+            const SizedBox(height: 20),
+            const Text(
+              '프로필 사진 수정하기',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Color(0xFFFEA539), fontSize: 15, fontWeight: FontWeight.w700),
+            ),
             const SizedBox(height: 10),
             Expanded(
               child: ListView(

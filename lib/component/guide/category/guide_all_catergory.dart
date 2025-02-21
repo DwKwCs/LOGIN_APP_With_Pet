@@ -3,7 +3,10 @@ import 'package:login_withpet/component/guide/guide_card.dart';
 import 'package:login_withpet/database/db_helper.dart';
 
 class GuideAllCatergory extends StatefulWidget {
-  const GuideAllCatergory({super.key});
+  const GuideAllCatergory({
+    super.key
+  });
+
 
   @override
   State<GuideAllCatergory> createState() => _GuideAllCatergoryState();
@@ -29,7 +32,7 @@ class _GuideAllCatergoryState extends State<GuideAllCatergory> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: _onRefresh,  // 화면 당기기 시 호출될 함수
+          onRefresh: _onRefresh,
           child: FutureBuilder<List<Map<String, dynamic>>>(
             future: guidesFuture,
             builder: (context, snapshot) {

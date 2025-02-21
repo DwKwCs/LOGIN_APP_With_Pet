@@ -25,6 +25,9 @@ class _DailyDiaryState extends State<DailyDiary> {
   final DatabaseHelper dbHelper = DatabaseHelper();
   late Future<Map<String, dynamic>?> diaryFuture;
 
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController sleepController = TextEditingController();
+
   final List<Map<String, dynamic>> checkItems = [
     {'title': '산책', 'color': Color(0xFFFFDFA9), 'index': 0, 'key': 'Walk'},
     {'title': '배변', 'color': Color(0xFFFFDFA9), 'index': 1, 'key': 'Health'},
@@ -58,6 +61,11 @@ class _DailyDiaryState extends State<DailyDiary> {
         check[0] = (diary['Walk'] ?? 0) == 1;
         check[1] = (diary['Health'] ?? 0) == 1;
         check[2] = (diary['Medicine'] ?? 0) == 1;
+
+        sleep = diary['Sleep'] ?? '0';
+        symptom = diary['Symptom'] ?? '';
+        memoTitle = diary['Memo_title'] ?? '';
+        memoContent = diary['Memo_content'] ?? '';
       });
     }
   }
@@ -71,19 +79,17 @@ class _DailyDiaryState extends State<DailyDiary> {
     );
 
     if (existing.isEmpty) {
-      // 날짜가 없으면 새로 삽입
       await dbHelper.insertDiary({
         'Date': date,
-        'Walk': 0,
-        'Health': 0,
-        'Medicine': 0,
-        'Sleep': '0',
-        'Symptom': '',
-        'Memo_title': '',
-        'Memo_content': '',
+        'Walk': check[0] ? 1 : 0,
+        'Health': check[1] ? 1 : 0,
+        'Medicine': check[2] ? 1 : 0,
+        'Sleep': sleep,
+        'Symptom': symptom,
+        'Memo_title': memoTitle,
+        'Memo_content': memoContent,
       });
     } else {
-      // 날짜가 있으면 업데이트
       await dbHelper.updateDiary(date, {
         'Date': date,
         'Walk': check[0] ? 1 : 0,
@@ -139,19 +145,37 @@ class _DailyDiaryState extends State<DailyDiary> {
               buildNavigationSymptomTile(diary),
               buildNavigationMemoTile(diary),
               const SizedBox(height: 5),
-              TextButton(
-                onPressed: () async {
-                  String formattedDate = DateFormat('yyyy.MM.dd').format(widget.selectedDate);
-                  await saveDiary(formattedDate, check);
-
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  '저장',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
-                ),
-              ),
-
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        '취소',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () async {
+                        String formattedDate = DateFormat('yyyy.MM.dd').format(widget.selectedDate);
+                        await saveDiary(formattedDate, check);
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        '저장',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         );
@@ -200,7 +224,7 @@ class _DailyDiaryState extends State<DailyDiary> {
           ),
           Expanded(
             child: Text(
-              '${item?['Sleep'] ?? '0'}회',
+              '${sleep}회',
               textAlign: TextAlign.end,
               style: const TextStyle(color: Colors.grey),
             ),
@@ -215,6 +239,13 @@ class _DailyDiaryState extends State<DailyDiary> {
   }
 
   void sleepCount() {
+    if(sleep == '0') {
+      sleepController.text = '';
+    }
+    else {
+      sleepController.text = sleep;
+    }
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -224,20 +255,56 @@ class _DailyDiaryState extends State<DailyDiary> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          title: Text('수면 중 호흡수'),
-          content: TextField(),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
+          title: const Text('수면 중 호흡수'),
+          content: Form(
+            key: _formKey,
+            child: TextFormField(
+              controller: sleepController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                hintText: '횟수를 입력하세요',
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '횟수를 입력하세요.';
+                }
+                else if(value.trim().isNotEmpty && value.trim()[0] == '0') {
+                  return '잘못된 입력 형식입니다.';
+                }
+
+                return null;
               },
-              child: Text('확인'),
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('취소'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      setState(() {
+                        sleep = sleepController.text;
+                      });
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
             ),
           ],
         );
       },
     );
   }
+
 
   Widget buildNavigationSymptomTile(Map<String, dynamic>? item) {
     return ListTile(
@@ -253,15 +320,20 @@ class _DailyDiaryState extends State<DailyDiary> {
       ),
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right_rounded),
-        onPressed: () {
-          Navigator.of(context).push(
+        onPressed: () async {
+          final result = await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => DailyMemo(
                 selectedDate: widget.selectedDate,
                 title: '증상',
+                symptom: symptom,
               ),
             ),
           );
+
+          if (result != null) symptom = result;
+
+          setState(() {});
         },
       ),
     );
@@ -286,7 +358,7 @@ class _DailyDiaryState extends State<DailyDiary> {
           ),
           Expanded(
             child: Text(
-              '${item?['Memo_title'] ?? ''}',
+              '${memoTitle}',
               textAlign: TextAlign.end,
               style: const TextStyle(color: Colors.grey),
             ),
@@ -295,15 +367,24 @@ class _DailyDiaryState extends State<DailyDiary> {
       ),
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right_rounded),
-        onPressed: () {
-          Navigator.of(context).push(
+        onPressed: () async {
+          final result = await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => DailyMemo(
                 selectedDate: widget.selectedDate,
                 title: '일기',
+                memoTitle: memoTitle,
+                memoContent: memoContent,
               ),
             ),
           );
+
+          if (result != null) {
+            memoTitle = result['title'];
+            memoContent = result['content'];
+          }
+
+          setState(() {});
         },
       ),
     );

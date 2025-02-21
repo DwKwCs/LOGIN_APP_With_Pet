@@ -128,6 +128,12 @@ class DatabaseHelper {
     return result.isNotEmpty ? result.first : null; // 데이터 없으면 null 반환
   }
 
+  Future<List<Map<String, dynamic>>> getAllDiary() async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query('Diary');
+    return result;
+  }
+
   // -----------------------------------------------
   // Profile 테이블: 삽입, 업데이트, 조회 함수
   // -----------------------------------------------

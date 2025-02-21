@@ -14,6 +14,13 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
   TabController? _tabController;
   int _selectedIndex = 0;
 
+  final DatabaseHelper dbHelper = DatabaseHelper();
+  late Future<List<Map<String, dynamic>>> guidesFuture;
+
+  Future<List<Map<String, dynamic>>> fetchGuides() async {
+    return _selectedIndex == 0 ? dbHelper.getAllGuides() : dbHelper.getSavedGuides();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -23,11 +30,13 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
       animationDuration: Duration.zero,
     );
     _tabController!.addListener(_onTabChanged);
+    guidesFuture = fetchGuides();
   }
 
   void _onTabChanged() {
     setState(() {
       _selectedIndex = _tabController!.index;
+      guidesFuture = fetchGuides();
     });
 
     // 탭 변경에 따라 데이터 로드
@@ -38,6 +47,12 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
     }
 
     setState(() {});
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() {
+      guidesFuture = fetchGuides();
+    });
   }
 
   @override
