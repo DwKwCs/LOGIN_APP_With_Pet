@@ -41,6 +41,52 @@ Future<void> initializeApp() async {
     print('프로필 데이터가 이미 존재합니다.');
   }
 
+  // 편지 테이블에서 데이터를 가져옵니다.
+  final letters = await DatabaseHelper().getAllLetters();
+
+  // 테스트 편지 데이터
+  if (letters.isEmpty) {
+    await DatabaseHelper().insertLetter({
+      'Date': '2025-02-20T14:30:45',
+      'Contents': '첫 번째 편지입니다.'
+    });
+
+    await DatabaseHelper().insertLetter({
+      'Date': '2025-02-21T14:30:46',
+      'Contents': '두 번째 편지입니다.'
+    });
+
+    await DatabaseHelper().insertLetter({
+      'Date': '2025-02-25T14:30:46',
+      'Contents': '세 번째 편지입니다.'
+    });
+
+    await DatabaseHelper().insertLetter({
+      'Date': '2025-03-03T14:30:46',
+      'Contents': '네 번째 편지입니다.'
+    });
+  } else {
+    print('테스트 데이터가 이미 존재합니다.');
+  }
+
+  // 임시저장 테이블에서 데이터를 가져옵니다.
+  final tempLetters = await DatabaseHelper().getAllTempLetters();
+
+  // 테스트 편지 데이터
+  if (tempLetters.isEmpty) {
+    await DatabaseHelper().insertTempLetter({
+      'Date': '2025-02-21T14:30:45',
+      'Contents': '첫 번째 임시편지입니다.'
+    });
+
+    await DatabaseHelper().insertTempLetter({
+      'Date': '2025-02-23T14:30:46',
+      'Contents': '두 번째 임시편지입니다.'
+    });
+  } else {
+    print('테스트 데이터가 이미 존재합니다.');
+  }
+
   // 가이드 테이블에서 데이터를 가져옵니다.
   final guides = await DatabaseHelper().getAllGuides();
 

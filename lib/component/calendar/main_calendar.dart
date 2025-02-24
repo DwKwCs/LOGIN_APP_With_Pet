@@ -74,8 +74,19 @@ class _MainCalendarState extends State<MainCalendar> {
       builder: (context) {
         return DailyDiary(selectedDate: _selectedDate);
       },
-    ).then((_) {
-      _loadDiaryEvents();
+    ).then((value) async {
+      await _loadDiaryEvents(); // ✅ 저장 후 캘린더 데이터 갱신
+
+      if (value == true) {
+        // ✅ "저장되었습니다!" 알림 표시 (3초 후 자동 사라짐)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("저장되었습니다!", style: TextStyle(fontSize: 16)),
+            duration: Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     });
   }
 
@@ -140,13 +151,13 @@ class _MainCalendarState extends State<MainCalendar> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.circle, size: 8, color: eventList[0] == 1 ? Color(0xFFFFDFA9) : Colors.transparent),
+                        Icon(Icons.circle, size: 9, color: eventList[0] == 1 ? Color(0xFFFFDFA9) : Colors.transparent),
                         const SizedBox(width: 2),
-                        Icon(Icons.circle, size: 8, color: eventList[1] == 1 ? Color(0xFFFEA539) : Colors.transparent),
+                        Icon(Icons.circle, size: 9, color: eventList[1] == 1 ? Color(0xFFFEA539) : Colors.transparent),
                         const SizedBox(width: 2),
-                        Icon(Icons.circle, size: 8, color: eventList[2] == 1 ? Color(0xFFED6D09) : Colors.transparent),
+                        Icon(Icons.circle, size: 9, color: eventList[2] == 1 ? Color(0xFFED6D09) : Colors.transparent),
                         const SizedBox(width: 2),
-                        Icon(Icons.circle, size: 8, color: eventList[3] == 1 ? Color(0xFFED6D09) : Colors.transparent),
+                        Icon(Icons.circle, size: 9, color: eventList[3] == 1 ? Color(0xFFED6D09) : Colors.transparent),
                       ],
                     ),
                   ),

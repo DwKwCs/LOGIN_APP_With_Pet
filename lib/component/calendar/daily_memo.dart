@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:login_withpet/database/db_helper.dart';
 
 class DailyMemo extends StatefulWidget {
   final DateTime selectedDate;
   final String title;
   final String symptom;
   final String memoTitle;
-  final String memoContent;
+  final String memoContents;
 
   const DailyMemo({
     super.key,
@@ -14,7 +13,7 @@ class DailyMemo extends StatefulWidget {
     required this.title,
     this.symptom = '',
     this.memoTitle = '',
-    this.memoContent = '',
+    this.memoContents = '',
   });
 
   @override
@@ -26,21 +25,21 @@ class _DailyMemoState extends State<DailyMemo> {
 
   late TextEditingController symptomController;
   late TextEditingController titleController;
-  late TextEditingController contentController;
+  late TextEditingController contentsController;
 
   @override
   void initState() {
     super.initState();
     symptomController = TextEditingController(text: widget.symptom);
     titleController = TextEditingController(text: widget.memoTitle);
-    contentController = TextEditingController(text: widget.memoContent);
+    contentsController = TextEditingController(text: widget.memoContents);
   }
 
   @override
   void dispose() {
     symptomController.dispose();
     titleController.dispose();
-    contentController.dispose();
+    contentsController.dispose();
     super.dispose();
   }
 
@@ -73,7 +72,7 @@ class _DailyMemoState extends State<DailyMemo> {
                       } else if (widget.title == '일기') {
                         Navigator.of(context).pop({
                           'title': titleController.text,
-                          'content': contentController.text
+                          'contents': contentsController.text
                         });
                       }
                     }
@@ -181,9 +180,9 @@ class _DailyMemoState extends State<DailyMemo> {
                 decoration: InputDecoration(
                   labelText: '오늘의 제목은 무엇인가요?',
                   hintText: '오늘의 제목은 무엇인가요?',
-                  border: InputBorder.none, // 기본 밑줄 제거
-                  enabledBorder: InputBorder.none, // 비활성화 상태에서도 밑줄 제거
-                  focusedBorder: InputBorder.none, // 포커스 상태에서도 밑줄 제거
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   filled: true,
                   fillColor: Color(0xFFFFF9ED),
                   floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -207,15 +206,15 @@ class _DailyMemoState extends State<DailyMemo> {
               const SizedBox(height: 10),
               TextFormField(
                 keyboardType: TextInputType.multiline,
-                controller: contentController,
+                controller: contentsController,
                 maxLines: 8,
                 decoration: InputDecoration(
                   labelText: '기억하고 싶은 내용이 있나요?',
                   hintText: '기억하고 싶은 내용이 있나요?',
                   filled: true,
                   fillColor: Color(0xFFFFF9ED),
-                  enabledBorder: InputBorder.none, // 비활성화 상태에서도 밑줄 제거
-                  focusedBorder: InputBorder.none, // 포커스 상태에서도 밑줄 제거
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   floatingLabelBehavior: FloatingLabelBehavior.never,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(1.0),

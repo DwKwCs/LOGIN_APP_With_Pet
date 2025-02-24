@@ -49,12 +49,6 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
     setState(() {});
   }
 
-  Future<void> _onRefresh() async {
-    setState(() {
-      guidesFuture = fetchGuides();
-    });
-  }
-
   @override
   void dispose() {
     _tabController!.removeListener(_onTabChanged);

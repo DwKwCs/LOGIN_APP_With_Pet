@@ -3,7 +3,6 @@ import 'package:login_withpet/component/guide/category/guide_all_catergory.dart'
 import 'package:login_withpet/component/guide/category/guide_rainbow_bridget.dart';
 import 'package:login_withpet/component/guide/category/guide_health.dart';
 import 'package:login_withpet/component/guide/category/guide_diet.dart';
-import 'package:login_withpet/database/db_helper.dart';
 
 class GuideAllScreen extends StatefulWidget {
   const GuideAllScreen({
@@ -24,8 +23,6 @@ class _GuideAllScreenState extends State<GuideAllScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(

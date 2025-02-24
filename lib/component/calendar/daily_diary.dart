@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:login_withpet/component/calendar/daily_memo.dart';
 import 'package:login_withpet/database/db_helper.dart';
+import 'package:intl/intl.dart';
 
 class DailyDiary extends StatefulWidget {
   final DateTime selectedDate;
@@ -20,7 +20,7 @@ class _DailyDiaryState extends State<DailyDiary> {
   String sleep = '0';
   String symptom = '';
   String memoTitle = '';
-  String memoContent = '';
+  String memoContents = '';
 
   final DatabaseHelper dbHelper = DatabaseHelper();
   late Future<Map<String, dynamic>?> diaryFuture;
@@ -65,7 +65,7 @@ class _DailyDiaryState extends State<DailyDiary> {
         sleep = diary['Sleep'] ?? '0';
         symptom = diary['Symptom'] ?? '';
         memoTitle = diary['Memo_title'] ?? '';
-        memoContent = diary['Memo_content'] ?? '';
+        memoContents = diary['Memo_contents'] ?? '';
       });
     }
   }
@@ -87,7 +87,7 @@ class _DailyDiaryState extends State<DailyDiary> {
         'Sleep': sleep,
         'Symptom': symptom,
         'Memo_title': memoTitle,
-        'Memo_content': memoContent,
+        'Memo_contents': memoContents,
       });
     } else {
       await dbHelper.updateDiary(date, {
@@ -98,7 +98,7 @@ class _DailyDiaryState extends State<DailyDiary> {
         'Sleep': sleep,
         'Symptom': symptom,
         'Memo_title': memoTitle,
-        'Memo_content': memoContent,
+        'Memo_contents': memoContents,
       });
     }
   }
@@ -120,7 +120,7 @@ class _DailyDiaryState extends State<DailyDiary> {
           'Sleep': '0',
           'Symptom': '',
           'Memo_title': '',
-          'Memo_content': '',
+          'Memo_contents': '',
           ...(snapshot.data ?? {}), // 기존 데이터가 있으면 덮어쓰기
         };
 
@@ -151,7 +151,7 @@ class _DailyDiaryState extends State<DailyDiary> {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        Navigator.of(context).pop();
                       },
                       child: const Text(
                         '취소',
@@ -165,7 +165,7 @@ class _DailyDiaryState extends State<DailyDiary> {
                       onPressed: () async {
                         String formattedDate = DateFormat('yyyy.MM.dd').format(widget.selectedDate);
                         await saveDiary(formattedDate, check);
-                        Navigator.pop(context);
+                        Navigator.of(context).pop(true);
                       },
                       child: const Text(
                         '저장',
@@ -374,17 +374,17 @@ class _DailyDiaryState extends State<DailyDiary> {
                 selectedDate: widget.selectedDate,
                 title: '일기',
                 memoTitle: memoTitle,
-                memoContent: memoContent,
+                memoContents: memoContents,
               ),
             ),
           );
 
           if (result != null) {
-            memoTitle = result['title'];
-            memoContent = result['content'];
+            setState(() {
+              memoTitle = result['title'];
+              memoContents = result['contents'];
+            });
           }
-
-          setState(() {});
         },
       ),
     );

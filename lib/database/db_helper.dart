@@ -25,6 +25,22 @@ class DatabaseHelper {
       path,
       version: 1,
       onCreate: (db, version) async {
+        // Letter 테이블 생성
+        await db.execute('''
+          CREATE TABLE Letter (
+            Date TEXT PRIMARY KEY,
+            Contents TEXT
+          )
+        ''');
+
+        // TempLetter 테이블 생성
+        await db.execute('''
+          CREATE TABLE TempLetter (
+            Date TEXT PRIMARY KEY,
+            Contents TEXT
+          )
+        ''');
+
         // Diary 테이블 생성
         await db.execute('''
           CREATE TABLE Diary (
@@ -35,7 +51,7 @@ class DatabaseHelper {
             Sleep TEXT,
             Symptom TEXT,
             Memo_title TEXT,
-            Memo_content TEXT
+            Memo_contents TEXT
           )
         ''');
 
@@ -77,6 +93,103 @@ class DatabaseHelper {
         ''');
       },
     );
+  }
+
+  // -----------------------------------------------
+  // Letter 테이블: 삽입, 업데이트, 조회, 삭제 함수
+  // -----------------------------------------------
+
+  Future<int> insertLetter(Map<String, dynamic> letter) async {
+    final db = await database;
+    return await db.insert('Letter', letter);
+  }
+
+  Future<int> updateLetter(String date, Map<String, dynamic> letter) async {
+    final db = await database;
+    return await db.update(
+      'Letter',
+      letter,
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+  }
+
+  Future<int> deleteLetter(String date) async {
+    final db = await database;
+    return await db.delete(
+      'Letter',
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+  }
+
+  Future<Map<String, dynamic>?> getLetterByDate(String date) async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'Letter',
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> getAllLetters() async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query('Letter', orderBy: 'Date ASC');
+    return result;
+  }
+
+  // -----------------------------------------------
+  // TempLetter 테이블: 삽입, 업데이트, 조회, 삭제 함수
+  // -----------------------------------------------
+
+  Future<int> insertTempLetter(Map<String, dynamic> tempLetter) async {
+    final db = await database;
+    return await db.insert('TempLetter', tempLetter);
+  }
+
+  Future<int> updateTempLetter(String date, Map<String, dynamic> tempLetter) async {
+    final db = await database;
+    return await db.update(
+      'TempLetter',
+      tempLetter,
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+  }
+
+  Future<int> deleteTempLetter(String date) async {
+    final db = await database;
+    return await db.delete(
+      'TempLetter',
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+  }
+
+  Future<int> deleteAllTempLetter() async {
+    final db = await database;
+    return await db.delete(
+      'TempLetter',
+    );
+  }
+
+  Future<Map<String, dynamic>?> getTempLetterByDate(String date) async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'TempLetter',
+      where: 'Date = ?',
+      whereArgs: [date],
+    );
+
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List<Map<String, dynamic>>> getAllTempLetters() async {
+    final db = await database;
+    List<Map<String, dynamic>> result = await db.query('TempLetter', orderBy: 'Date ASC');
+    return result;
   }
 
   // -----------------------------------------------
