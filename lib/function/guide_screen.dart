@@ -11,15 +11,10 @@ class GuideScreen extends StatefulWidget {
 }
 
 class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStateMixin {
-  TabController? _tabController;
-  int _selectedIndex = 0;
-
-  final DatabaseHelper dbHelper = DatabaseHelper();
+  late TabController _tabController;
   late Future<List<Map<String, dynamic>>> guidesFuture;
 
-  Future<List<Map<String, dynamic>>> fetchGuides() async {
-    return _selectedIndex == 0 ? dbHelper.getAllGuides() : dbHelper.getSavedGuides();
-  }
+  final DatabaseHelper dbHelper = DatabaseHelper();
 
   @override
   void initState() {
@@ -28,31 +23,25 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
       length: 2,
       vsync: this,
       animationDuration: Duration.zero,
-    );
-    _tabController!.addListener(_onTabChanged);
-    guidesFuture = fetchGuides();
+    )..addListener(_onTabChanged);
+
+    guidesFuture = dbHelper.getAllGuides();
   }
 
   void _onTabChanged() {
     setState(() {
-      _selectedIndex = _tabController!.index;
-      guidesFuture = fetchGuides();
+      if (_tabController.index == 0) {
+        guidesFuture = dbHelper.getAllGuides();
+      } else {
+        guidesFuture = dbHelper.getSavedGuides();
+      }
     });
-
-    // 탭 변경에 따라 데이터 로드
-    if (_selectedIndex == 0) {
-      DatabaseHelper().getAllGuides(); // 모든 가이드
-    } else if (_selectedIndex == 1) {
-      DatabaseHelper().getSavedGuides(); // 저장된 가이드
-    }
-
-    setState(() {});
   }
 
   @override
   void dispose() {
-    _tabController!.removeListener(_onTabChanged);
-    _tabController!.dispose();
+    _tabController.removeListener(_onTabChanged);
+    _tabController.dispose();
     super.dispose();
   }
 
@@ -65,14 +54,32 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
         centerTitle: true,
         title: Text(
           '가이드',
-          style: TextStyle(fontWeight: FontWeight.w800)
+          style: TextStyle(fontWeight: FontWeight.w800),
         ),
       ),
       body: Column(
         children: [
           _tabBar(),
           Expanded(
-            child: _tabBarView(),
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: guidesFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text("데이터를 불러오는 중 오류 발생"));
+                }
+
+                /*
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(child: Text("가이드 데이터가 없습니다."));
+                }
+                */
+
+                return _tabBarView(snapshot.data!);
+              },
+            ),
           ),
         ],
       ),
@@ -93,23 +100,19 @@ class _GuideScreenState extends State<GuideScreen> with SingleTickerProviderStat
       unselectedLabelColor: Color(0xFFCAC7C4),
       controller: _tabController,
       tabs: const [
-        Tab(
-          text: '모든 가이드',
-        ),
-        Tab(
-          text: '저장한 가이드',
-        ),
+        Tab(text: '모든 가이드'),
+        Tab(text: '저장한 가이드'),
       ],
     );
   }
 
-  Widget _tabBarView() {
+  Widget _tabBarView(List<Map<String, dynamic>> guides) {
     return TabBarView(
       physics: NeverScrollableScrollPhysics(),
       controller: _tabController,
       children: [
-        GuideAllScreen(),
-        SavedGuideScreen(),
+        GuideAllScreen(guidesFuture: Future.value(guides)),
+        SavedGuideScreen(guidesFuture: Future.value(guides.where((guide) => guide['IsSaved'] == 1).toList())),
       ],
     );
   }

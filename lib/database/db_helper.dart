@@ -323,6 +323,21 @@ class DatabaseHelper {
     );
   }
 
+  Future<Map<String, dynamic>?> getGuidesByCode(int code) async {
+    final db = await database;
+    final result = await db.query(
+      'Guides',
+      where: 'Code = ?',
+      whereArgs: [code],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
+  }
+
+
   Future<List<Map<String, dynamic>>> getSavedGuides() async {
     final db = await database;
     return await db.query(

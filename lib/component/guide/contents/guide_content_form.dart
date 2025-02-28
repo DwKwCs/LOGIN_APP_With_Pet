@@ -20,44 +20,49 @@ class GuideContentForm extends StatefulWidget {
 class GuideContentFormState extends State<GuideContentForm> {
   final DatabaseHelper dbHelper = DatabaseHelper();
   late Future<List<Map<String, dynamic>>> contentsFuture;
-  late List<bool> checkStates; // 상태를 저장할 리스트
+  List<bool> checkStates = []; // 체크 상태 리스트
   bool isSaved = false; // 북마크 상태
 
   @override
   void initState() {
     super.initState();
-    isSaved = widget.isSaved == 1; // 초기 북마크 상태 설정
-    fetchContents();
+    isSaved = widget.isSaved == 1;
+    _fetchContents(); // ✅ 가이드 내용 로드
   }
 
-  void fetchContents() {
-    contentsFuture = dbHelper.getContents(widget.code);
-    contentsFuture.then((contents) {
-      setState(() {
-        checkStates = List.generate(contents.length, (index) => contents[index]['IsChecked'] == 1);
-      });
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  /// ✅ 가이드 내용 가져오기
+  Future<void> _fetchContents() async {
+    final contents = await dbHelper.getContents(widget.code);
+    setState(() {
+      contentsFuture = Future.value(contents); // ✅ Future 재할당
+      checkStates = List.generate(contents.length, (index) => contents[index]['IsChecked'] == 1);
     });
   }
 
-  void savedGuide() async {
-    if (isSaved) {
-      await DatabaseHelper().updateGuideIsSaved(widget.code, 1);
-      var guides = await DatabaseHelper().getSavedGuides();
-      print(guides);
-    } else {
-      await DatabaseHelper().updateGuideIsSaved(widget.code, 0);
-    }
+  /// ✅ 북마크 저장
+  Future<void> _saveGuide() async {
+    isSaved = !isSaved;
+    await dbHelper.updateGuideIsSaved(widget.code, isSaved ? 1 : 0);
+    setState(() {}); // ✅ UI 업데이트
   }
 
-  void updateGuideIsChecked() async {
+  /// ✅ 체크 상태 업데이트
+  Future<void> _updateCheckedState() async {
     for (int i = 0; i < checkStates.length; i++) {
-      await DatabaseHelper().updateContentIsChecked(widget.code, i + 1, checkStates[i] ? 1 : 0);
+      await dbHelper.updateContentIsChecked(widget.code, i + 1, checkStates[i] ? 1 : 0);
     }
   }
 
-  void updateGuidePercent() async {
+  /// ✅ 진행률 업데이트
+  Future<void> _updateGuidePercent() async {
     int trueCount = checkStates.where((state) => state).length;
-    await DatabaseHelper().updateGuidePercent(widget.code, trueCount / checkStates.length);
+    double newPercent = trueCount / checkStates.length;
+    await dbHelper.updateGuidePercent(widget.code, newPercent);
   }
 
   @override
@@ -68,17 +73,19 @@ class GuideContentFormState extends State<GuideContentForm> {
         backgroundColor: Colors.white,
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            updateGuideIsChecked();
-            updateGuidePercent();
+          onPressed: () async {
+            await _updateCheckedState();
+            await _updateGuidePercent();
+            if(isSaved) {
+              Navigator.of(context).pop(true);
+            }
+            else {
+              Navigator.of(context).pop(false);
+            }
           },
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
-        title: Text(
-          widget.title,
-          style: const TextStyle(fontWeight: FontWeight.w800),
-        ),
+        title: Text(widget.title, style: const TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           IconButton(
             icon: isSaved
@@ -87,12 +94,7 @@ class GuideContentFormState extends State<GuideContentForm> {
             iconSize: 30,
             padding: const EdgeInsets.only(right: 30),
             highlightColor: Colors.transparent,
-            onPressed: () {
-              setState(() {
-                isSaved = !isSaved;
-                savedGuide();
-              });
-            },
+            onPressed: _saveGuide,
           ),
         ],
       ),
@@ -129,11 +131,8 @@ class GuideContentFormState extends State<GuideContentForm> {
                     ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
-                  side: BorderSide(
-                    color: Color(0xFFCAC7C4),
-                    width: 1.5,
-                  ),
-                  activeColor: Color(0xFFFFC873),
+                  side: const BorderSide(color: Color(0xFFCAC7C4), width: 1.5),
+                  activeColor: const Color(0xFFFFC873),
                   checkColor: Colors.white,
                   value: checkStates[index],
                   onChanged: (bool? value) {

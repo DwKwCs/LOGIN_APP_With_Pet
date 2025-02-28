@@ -3,9 +3,9 @@ import 'package:login_withpet/component/guide/guide_card.dart';
 import 'package:login_withpet/database/db_helper.dart';
 
 class SavedGuideScreen extends StatefulWidget {
-  const SavedGuideScreen({
-    super.key,
-  });
+  final Future<List<Map<String, dynamic>>> guidesFuture;
+
+  const SavedGuideScreen({super.key, required this.guidesFuture});
 
   @override
   State<SavedGuideScreen> createState() => _SavedGuideScreenState();
@@ -18,19 +18,14 @@ class _SavedGuideScreenState extends State<SavedGuideScreen> {
   @override
   void initState() {
     super.initState();
-    fetchGuides();  // 초기 데이터 로드
+    guidesFuture = widget.guidesFuture; // 초기 데이터 설정
   }
 
-  // 데이터 로드 함수
-  void fetchGuides() {
+  /// ✅ 저장된 가이드 다시 불러오기
+  Future<void> _loadSavedGuides() async {
     setState(() {
-      guidesFuture = dbHelper.getSavedGuides();  // 'getSavedGuides' 함수 호출
+      guidesFuture = dbHelper.getSavedGuides();
     });
-  }
-
-  // 화면 당기기 갱신 함수
-  Future<void> _onRefresh() async {
-    fetchGuides();  // 갱신시 데이터 다시 로드
   }
 
   @override
@@ -38,91 +33,94 @@ class _SavedGuideScreenState extends State<SavedGuideScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _onRefresh,  // 화면을 당기면 이 함수가 호출됨
-          child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: guidesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: guidesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              if (snapshot.hasError) {
-                return Center(child: Text('오류 발생: ${snapshot.error}'));
-              }
+            if (snapshot.hasError) {
+              return Center(child: Text('오류 발생: ${snapshot.error}'));
+            }
 
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.only(top: 8, left: 25),
-                      height: 30,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: const BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.transparent, width: 3)),
-                      ),
-                      child: const Text(
-                        '총 0개의 가이드',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFFCAC7C4),
-                        ),
-                      ),
-                    ),
-                    const Expanded(
-                      child: Center(
-                        child: Text(
-                          '저장된 가이드가 없습니다.\n가이드를 추가해보세요!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 18, color: Colors.black),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              }
+            final guides = snapshot.data ?? [];
 
-              final guides = snapshot.data!;
+            return guides.isEmpty
+                ? _buildEmptyView()
+                : Column(
+              children: [
+                _buildHeader(guides.length),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: guides.length,
+                    itemBuilder: (context, index) {
+                      final guide = guides[index];
 
-              return Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(left: 25),
-                    height: 30,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: const BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.transparent, width: 3)),
-                    ),
-                    child: Text(
-                      '총 ${guides.length}개의 가이드',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFFCAC7C4),
-                      ),
-                    ),
+                      return GuideCard(
+                        code: guide['Code'],
+                        title: guide['Title'],
+                        tag: guide['Tag'],
+                        percent: guide['Percent'],
+                        isSaved: guide['IsSaved'],
+                        onUnsave: _loadSavedGuides, // ✅ 북마크 해제 시 리스트 새로고침
+                      );
+                    },
                   ),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: guides.length,
-                      itemBuilder: (context, index) {
-                        final guide = guides[index];
-
-                        return GuideCard(
-                          code: guide['Code'],
-                          title: guide['Title'],
-                          tag: guide['Tag'],
-                          percent: guide['Percent'],
-                          isSaved: guide['IsSaved'],
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+                ),
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  /// ✅ 가이드 개수 표시 헤더
+  Widget _buildHeader(int count) {
+    return Container(
+      padding: const EdgeInsets.only(left: 25),
+      height: 30,
+      width: MediaQuery.of(context).size.width,
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.transparent, width: 3)),
+      ),
+      child: Text(
+        '총 $count개의 가이드',
+        style: const TextStyle(
+          fontSize: 16,
+          color: Color(0xFFCAC7C4),
+        ),
+      ),
+    );
+  }
+
+  /// ✅ 가이드가 없을 때 빈 화면 UI
+  Widget _buildEmptyView() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.only(top: 8, left: 25),
+          height: 30,
+          width: MediaQuery.of(context).size.width,
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: Colors.transparent, width: 3)),
+          ),
+          child: const Text(
+            '총 0개의 가이드',
+            style: TextStyle(fontSize: 16, color: Color(0xFFCAC7C4)),
+          ),
+        ),
+        const Expanded(
+          child: Center(
+            child: Text(
+              '저장된 가이드가 없습니다.\n가이드를 추가해보세요!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 18, color: Colors.black),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

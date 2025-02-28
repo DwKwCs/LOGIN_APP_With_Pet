@@ -9,6 +9,7 @@ class GuideCard extends StatefulWidget {
   final String tag;
   final double percent;
   final int isSaved;
+  final VoidCallback? onUnsave;
 
   const GuideCard({
     super.key,
@@ -17,6 +18,7 @@ class GuideCard extends StatefulWidget {
     required this.tag,
     required this.percent,
     required this.isSaved,
+    this.onUnsave,
   });
 
   @override
@@ -24,22 +26,34 @@ class GuideCard extends StatefulWidget {
 }
 
 class GuideCardState extends State<GuideCard> {
+  late int code;
+  late String title;
+  late String tag;
+  late double percent;
   late bool isSaved;
   final DatabaseHelper dbHelper = DatabaseHelper();
 
   @override
   void initState() {
     super.initState();
+    code = widget.code;
+    title = widget.title;
+    tag = widget.tag;
+    percent = widget.percent;
     isSaved = widget.isSaved == 1;
   }
 
-  void savedGuide() async {
-    if (isSaved) {
-      await DatabaseHelper().updateGuideIsSaved(widget.code, 1);
-      var guides = await DatabaseHelper().getSavedGuides();
-      print(guides);
-    } else {
-      await DatabaseHelper().updateGuideIsSaved(widget.code, 0);
+  /// ✅ 저장 상태 업데이트
+  Future<void> toggleSavedGuide() async {
+    setState(() {
+      isSaved = !isSaved;
+    });
+
+    await dbHelper.updateGuideIsSaved(widget.code, isSaved ? 1 : 0);
+
+    // ✅ 북마크 해제 시 `onUnsave` 콜백 호출하여 `SavedGuideScreen` 갱신
+    if (!isSaved && widget.onUnsave != null) {
+      widget.onUnsave!();
     }
   }
 
@@ -48,24 +62,41 @@ class GuideCardState extends State<GuideCard> {
     return Container(
       height: 100,
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.only(left: 15, right: 15),
+      padding: EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFF1EDE6), width: 1)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
+          Align(
             alignment: Alignment.centerLeft,
             child: TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => GuideContentForm(
-                    code: widget.code,
-                    title: widget.title,
-                    isSaved: widget.isSaved,
-                  )),
+              onPressed: () async {
+                final result = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => GuideContentForm(
+                      code: code,
+                      title: title,
+                      isSaved: isSaved ? 1 : 0,
+                    ),
+                  ),
                 );
+
+                if (result == true) {
+                  final updatedGuide = await dbHelper.getGuidesByCode(widget.code);
+                  if (updatedGuide != null) {
+                    setState(() {
+                      percent = updatedGuide['Percent'];
+                      isSaved = updatedGuide['IsSaved'] == 1;
+                    });
+                  }
+                }
+                else {
+                  setState(() {
+                    widget.onUnsave!();
+                  });
+                }
               },
               child: Text(
                 widget.title,
@@ -73,6 +104,7 @@ class GuideCardState extends State<GuideCard> {
               ),
             ),
           ),
+
           Transform.translate(
             offset: Offset(0, -10),
             child: SizedBox(
@@ -89,38 +121,33 @@ class GuideCardState extends State<GuideCard> {
                   ),
                   Spacer(),
                   IconButton(
-                    icon: Icon(Icons.bookmark_outline_rounded),
+                    icon: Icon(
+                      isSaved ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
+                      color: isSaved ? Colors.black : Colors.grey,
+                    ),
                     iconSize: 30,
-                    isSelected: isSaved,
-                    selectedIcon: Icon(Icons.bookmark_rounded, color: Colors.black),
-                    highlightColor: Colors.transparent,
-                    onPressed: () {
-                      setState(() {
-                        isSaved = !isSaved;
-                        savedGuide();
-                      });
-                    },
+                    onPressed: toggleSavedGuide,
                   ),
                 ],
               ),
             ),
           ),
+
           Transform.translate(
             offset: Offset(0, -10),
-            child: Container(
-              child: Row(
-                children: [
-                  LinearPercentIndicator(
-                    width: 180.0,
-                    lineHeight: 8.0,
-                    percent: widget.percent,
-                    barRadius: Radius.circular(10),
-                    backgroundColor: Colors.grey[300],
-                    progressColor: Color(0xFFFFC873),
-                  ),
-                  Text('${(widget.percent * 100).toStringAsFixed(2)}%'),
-                ],
-              ),
+            child: Row(
+              children: [
+                LinearPercentIndicator(
+                  width: 180.0,
+                  lineHeight: 8.0,
+                  percent: percent,
+                  barRadius: Radius.circular(10),
+                  backgroundColor: Colors.grey[300],
+                  progressColor: Color(0xFFFFC873),
+                ),
+                SizedBox(width: 10),
+                Text('${(percent * 100).toStringAsFixed(2)}%'),
+              ],
             ),
           ),
         ],

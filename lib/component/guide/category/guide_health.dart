@@ -3,7 +3,12 @@ import 'package:login_withpet/component/guide/guide_card.dart';
 import 'package:login_withpet/database/db_helper.dart';
 
 class GuideHealth extends StatefulWidget {
-  const GuideHealth({super.key});
+  final Future<List<Map<String, dynamic>>> guidesFuture;
+
+  const GuideHealth({
+    super.key,
+    required this.guidesFuture,
+  });
 
   @override
   State<GuideHealth> createState() => _GuideHealthState();
@@ -11,16 +16,10 @@ class GuideHealth extends StatefulWidget {
 
 class _GuideHealthState extends State<GuideHealth> {
   final DatabaseHelper dbHelper = DatabaseHelper();
-  late Future<List<Map<String, dynamic>>> guidesFuture;
 
   @override
   void initState() {
     super.initState();
-    guidesFuture = fetchGuides();
-  }
-
-  Future<List<Map<String, dynamic>>> fetchGuides() async {
-    return await dbHelper.getGuides('건강');
   }
 
   @override
@@ -29,7 +28,7 @@ class _GuideHealthState extends State<GuideHealth> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: FutureBuilder<List<Map<String, dynamic>>>(
-          future: guidesFuture,
+          future: widget.guidesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
