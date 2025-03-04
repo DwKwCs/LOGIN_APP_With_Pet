@@ -4,12 +4,15 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:login_withpet/database/db_helper.dart';
 import 'package:login_withpet/database/guide_data.dart';
+import 'package:login_withpet/component/home/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 날짜 형식 초기화 (한국어 포함)
   await initializeDateFormatting();
+
+  await NotificationService.init(); // ✅ 알림 초기화
 
   // 앱 초기화
   await initializeApp();
@@ -42,7 +45,7 @@ Future<void> initializeApp() async {
   }
 
   // 편지 테이블에서 데이터를 가져옵니다.
-  final letters = await DatabaseHelper().getAllLetters();
+  final letters = await DatabaseHelper().getAllLetters(true);
 
   // 테스트 편지 데이터
   if (letters.isEmpty) {
@@ -70,7 +73,7 @@ Future<void> initializeApp() async {
   }
 
   // 임시저장 테이블에서 데이터를 가져옵니다.
-  final tempLetters = await DatabaseHelper().getAllTempLetters();
+  final tempLetters = await DatabaseHelper().getAllTempLetters(true);
 
   // 테스트 편지 데이터
   if (tempLetters.isEmpty) {

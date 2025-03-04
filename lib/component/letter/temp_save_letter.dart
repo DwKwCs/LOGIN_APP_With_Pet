@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:login_withpet/component/letter/write_letter.dart';
 import 'package:login_withpet/database/db_helper.dart';
+import 'package:intl/intl.dart';
 
 class TempSaveLetter extends StatefulWidget {
   const TempSaveLetter({super.key});
@@ -22,7 +23,7 @@ class _TempSaveLetterState extends State<TempSaveLetter> {
   }
 
   Future<List<Map<String, dynamic>>> fetchTempLetters() async {
-    final tempLetters = await dbHelper.getAllTempLetters();
+    final tempLetters = await dbHelper.getAllTempLetters(true);
     setState(() {
       count = tempLetters.length;
     });
@@ -114,6 +115,11 @@ class _TempSaveLetterState extends State<TempSaveLetter> {
 
   /// ✅ 일반 모드 UI (임시 저장 편지 목록)
   Widget _buildNormalModeItem(Map<String, dynamic> letter) {
+    DateTime? parsedDate = DateTime.tryParse(letter['Date'] ?? '');
+    String formattedDate = parsedDate != null
+        ? DateFormat('yyyy년 MM월 dd일 HH시 mm분').format(parsedDate)
+        : '날짜 없음';
+
     return Card(
       color: const Color(0xFFFFF9ED),
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -124,19 +130,22 @@ class _TempSaveLetterState extends State<TempSaveLetter> {
           letter['Contents'] ?? '제목 없음',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        subtitle: Text(letter['Date']),
+        subtitle: Text(formattedDate),
         trailing: Icon(Icons.arrow_forward_ios, size: 20),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => WriteLetterScreen(letter: letter),
+              builder: (context) => WriteLetterScreen(letter: letter, isTempLetter: 1),
             ),
           ).then((value) {
             if (value == true) {
               setState(() {
                 tempLettersFuture = fetchTempLetters();
               });
+
+              // ✅ LetterScreen으로 돌아갈 때 편지 리스트 갱신
+              Navigator.of(context).pop(true);
             }
           });
         },

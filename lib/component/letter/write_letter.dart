@@ -3,10 +3,12 @@ import 'package:login_withpet/database/db_helper.dart';
 
 class WriteLetterScreen extends StatefulWidget {
   final Map<String, dynamic>? letter;
+  final int isTempLetter;
 
   const WriteLetterScreen({
     super.key,
     this.letter,
+    required this.isTempLetter,
   });
 
   @override
@@ -18,19 +20,17 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
   final DatabaseHelper dbHelper = DatabaseHelper();
   late TextEditingController letterController;
   final int maxLength = 240;
-  int isTempLetter = 0;
+  late int isTempLetter;
 
   @override
   void initState() {
     super.initState();
-    // ✅ letter 객체가 있을 경우 해당 내용을 불러오고, 없으면 빈 값 설정
+    isTempLetter = widget.isTempLetter;
     letterController = TextEditingController(
-      text: widget.letter != null ? widget.letter!['Contents'] ?? '' : '',
+      text: isTempLetter == 1 ? widget.letter!['Contents'] : '',
     );
-    if(widget.letter != null) {
-      isTempLetter = 1;
-    }
   }
+
 
   @override
   void dispose() {
@@ -49,10 +49,11 @@ class _WriteLetterScreenState extends State<WriteLetterScreen> {
       'Contents': letterController.text.trim(),
     });
 
-    if(isTempLetter == 1) {
+    if (isTempLetter == 1) {
       await dbHelper.deleteTempLetter(widget.letter!['Date']);
     }
 
+    // ✅ 편지 저장 후 TempSaveLetter로 돌아가고, 그 후 LetterScreen으로 이동
     Navigator.of(context).pop(true);
   }
 

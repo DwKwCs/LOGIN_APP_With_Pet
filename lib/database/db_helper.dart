@@ -134,11 +134,13 @@ class DatabaseHelper {
     return result.isNotEmpty ? result.first : null;
   }
 
-  Future<List<Map<String, dynamic>>> getAllLetters() async {
+  Future<List<Map<String, dynamic>>> getAllLetters(bool isAsc) async {
     final db = await database;
-    List<Map<String, dynamic>> result = await db.query('Letter', orderBy: 'Date ASC');
+    String order = isAsc ? 'ASC' : 'DESC'; // 올바른 정렬 방식 적용
+    List<Map<String, dynamic>> result = await db.query('Letter', orderBy: 'Date $order');
     return result;
   }
+
 
   // -----------------------------------------------
   // TempLetter 테이블: 삽입, 업데이트, 조회, 삭제 함수
@@ -186,9 +188,10 @@ class DatabaseHelper {
     return result.isNotEmpty ? result.first : null;
   }
 
-  Future<List<Map<String, dynamic>>> getAllTempLetters() async {
+  Future<List<Map<String, dynamic>>> getAllTempLetters(bool isAsc) async {
     final db = await database;
-    List<Map<String, dynamic>> result = await db.query('TempLetter', orderBy: 'Date ASC');
+    String order = isAsc ? 'ASC' : 'DESC'; // 올바른 정렬 방식 적용
+    List<Map<String, dynamic>> result = await db.query('TempLetter', orderBy: 'Date $order');
     return result;
   }
 

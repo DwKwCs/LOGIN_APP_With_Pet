@@ -84,8 +84,8 @@ class _InfoScreenState extends State<InfoScreen> with SingleTickerProviderStateM
       physics: NeverScrollableScrollPhysics(),
       controller: tabController,
       children: [
-        WebViewHospital(),
-        WebViewFuneralHall(),
+        HospitalMap(),
+        FuneralHallMap(),
       ],
     );
   }

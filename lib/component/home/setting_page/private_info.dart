@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key});
+class PrivateInfo extends StatefulWidget {
+  const PrivateInfo({super.key});
 
   @override
-  State<NotificationScreen> createState() => _NotificationState();
+  State<PrivateInfo> createState() => _PrivateInfoState();
 }
 
-class _NotificationState extends State<NotificationScreen> {
+class _PrivateInfoState extends State<PrivateInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,8 +21,8 @@ class _NotificationState extends State<NotificationScreen> {
           icon: const Icon(Icons.chevron_left),
         ),
         title: const Text(
-          '알림 설정',
-          style: TextStyle(fontWeight: FontWeight.w800)
+            '개인정보 처리방침',
+            style: TextStyle(fontWeight: FontWeight.w800)
         ),
         centerTitle: true,
       ),

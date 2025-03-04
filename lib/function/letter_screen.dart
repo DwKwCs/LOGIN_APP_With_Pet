@@ -15,16 +15,17 @@ class LetterScreen extends StatefulWidget {
 class _LetterScreenState extends State<LetterScreen> {
   final DatabaseHelper dbHelper = DatabaseHelper();
   late Future<List<Map<String, dynamic>>> lettersFuture;
+  bool isAsc = true;
   int count = 0;
 
   @override
   void initState() {
     super.initState();
-    lettersFuture = fetchLetters();
+    lettersFuture = fetchLetters(true);
   }
 
-  Future<List<Map<String, dynamic>>> fetchLetters() async {
-    final letters = await dbHelper.getAllLetters();
+  Future<List<Map<String, dynamic>>> fetchLetters(bool isAsc) async {
+    final letters = isAsc ? await dbHelper.getAllLetters(true) : await dbHelper.getAllLetters(false);
 
     setState(() {
       count = letters.length;
@@ -55,7 +56,7 @@ class _LetterScreenState extends State<LetterScreen> {
 
               if (result == true) {
                 setState(() {
-                  lettersFuture = fetchLetters();
+                  lettersFuture = isAsc ? fetchLetters(true) : fetchLetters(false);
                 });
               }
             },
@@ -64,12 +65,12 @@ class _LetterScreenState extends State<LetterScreen> {
             icon: Image.asset('asset/icons/pencil.png'),
             onPressed: () async {
               await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => WriteLetterScreen()),
+                MaterialPageRoute(builder: (context) => WriteLetterScreen(isTempLetter: 0)),
               ).then((value) {
 
                 if (value == true) {
                   setState(() {
-                    lettersFuture = fetchLetters();
+                    lettersFuture = isAsc ? fetchLetters(true) : fetchLetters(false);
                   });
 
                   // ✅ "저장되었습니다!" 알림 표시 (3초 후 자동 사라짐)
@@ -107,8 +108,24 @@ class _LetterScreenState extends State<LetterScreen> {
                   const Text('전체', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w700)),
                   const SizedBox(width: 8),
                   Text('$count', style: TextStyle(color: Color(0xFFFFC873), fontSize: 20, fontWeight: FontWeight.w700)),
+                  Spacer(), // ✅ 오른쪽 끝으로 밀기
+                  TextButton(
+                    style: ButtonStyle(
+                      overlayColor: MaterialStateProperty.all(Colors.transparent),
+                    ),
+                    child: Text(
+                      isAsc ? '최신순' : '오래된 순',
+                      style: TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isAsc = !isAsc; // ✅ 정렬 순서 변경
+                        lettersFuture = fetchLetters(isAsc); // ✅ 정렬된 데이터 다시 로드
+                      });
+                    },
+                  ),
                 ],
-              ),
+              )
             ),
           ),
           Expanded(
@@ -136,13 +153,6 @@ class _LetterScreenState extends State<LetterScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            date,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ),
                         ...letterList.map((letter) => _buildLetterCard(letter)).toList(),
                       ],
                     );
@@ -191,7 +201,7 @@ class _LetterScreenState extends State<LetterScreen> {
 
             if (value == true) {
               setState(() {
-                lettersFuture = fetchLetters();
+                lettersFuture = isAsc ? fetchLetters(true) : fetchLetters(false);
               });
 
               // ✅ "삭제되었습니다!" 알림 표시 (3초 후 자동 사라짐)
@@ -202,6 +212,11 @@ class _LetterScreenState extends State<LetterScreen> {
                   behavior: SnackBarBehavior.floating,
                 ),
               );
+            }
+            else if(value == false) {
+              setState(() {
+                lettersFuture = isAsc ? fetchLetters(true) : fetchLetters(false);
+              });
             }
           });
         },
