@@ -4,10 +4,10 @@ class AnnounceScreen extends StatefulWidget {
   const AnnounceScreen({super.key});
 
   @override
-  State<AnnounceScreen> createState() => _NotificationState();
+  State<AnnounceScreen> createState() => _AnnounceScreenState();
 }
 
-class _NotificationState extends State<AnnounceScreen> {
+class _AnnounceScreenState extends State<AnnounceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,6 +25,12 @@ class _NotificationState extends State<AnnounceScreen> {
           style: TextStyle(fontWeight: FontWeight.w800)
         ),
         centerTitle: true,
+      ),
+      body: Center(
+        child: Text(
+          '공지사항이 없습니다!',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

@@ -1,37 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:login_withpet/component/home/notification_service.dart';
-import 'package:login_withpet/component/home/notice_share_preferences.dart';
+import 'package:login_withpet/component/home/notice/notice_share_preferences.dart';
+import 'package:login_withpet/database/db_helper.dart';
+import 'package:login_withpet/component/home/notice/notification_service.dart';
+import 'package:login_withpet/component/home/notice/notification_local.dart'; // 🔹 알림 조건 확인 로직
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
 
   @override
-  State<NotificationScreen> createState() => _NotificationState();
+  State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
-class _NotificationState extends State<NotificationScreen> {
+class _NotificationScreenState extends State<NotificationScreen> {
   List<bool> noticeChecked = [true, true];
 
   @override
   void initState() {
     super.initState();
-    _loadSettings(); // 앱 시작 시 알림 설정 불러오기
+    _initializeNotificationSettings();
   }
 
-  // 알림 설정 불러오기
-  Future<void> _loadSettings() async {
-    NoticeSharePreferences settings = NoticeSharePreferences();
-    List<bool> savedSettings = await settings.loadNotificationSettings();
+  Future<void> _initializeNotificationSettings() async {
+    await NotificationService.initNotifications(); // 알림 시스템 초기화
+    final saved = await NoticeSharePreferences().loadNotificationSettings();
     setState(() {
-      noticeChecked = savedSettings;
+      noticeChecked = saved;
     });
   }
 
-  // 알림 설정 저장
-  Future<void> _saveSettings() async {
-    NoticeSharePreferences settings = NoticeSharePreferences();
-    await settings.saveNotificationSettings(noticeChecked);
+  Future<void> _onSwitchChanged(int index, bool value) async {
+    setState(() {
+      noticeChecked[index] = value;
+    });
+
+    await NoticeSharePreferences().saveNotificationSettings(noticeChecked);
+
+    // 알림 조건 재검사 후 예약/취소 수행
+    await reloadDailyNotificationFromMain();
   }
 
   @override
@@ -41,9 +47,7 @@ class _NotificationState extends State<NotificationScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
           icon: const Icon(Icons.chevron_left),
         ),
         title: const Text(
@@ -94,27 +98,12 @@ class _NotificationState extends State<NotificationScreen> {
           CupertinoSwitch(
             activeColor: const Color(0xffffc873),
             value: noticeChecked[index],
-            onChanged: (bool value) {
-              setState(() {
-                noticeChecked[index] = value;
-                _updateNotification(index, value); // 알림 활성화/비활성화
-                _saveSettings(); // 설정 변경 시 저장
-              });
+            onChanged: (bool value) async {
+              await _onSwitchChanged(index, value);
             },
           ),
         ],
       ),
     );
-  }
-
-  /// 알림 설정 업데이트
-  void _updateNotification(int index, bool isEnabled) {
-    if (isEnabled) {
-      String title = index == 0 ? "편지 작성 알림" : "캘린더 작성 알림";
-      String body = index == 0
-          ? "오늘의 편지를 아직 작성하지 않았어요! 작성해 보세요."
-          : "오늘의 캘린더를 아직 작성하지 않았어요! 작성해 보세요.";
-      NotificationService.showNotification(title, body);
-    }
   }
 }
